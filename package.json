@@ -1,0 +1,24 @@
+{
+  "name": "transcripcion-con-resumen",
+  "version": "1.0.0",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/marcosperez85/transcripcion-con-resumen.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/marcosperez85/transcripcion-con-resumen/issues"
+  },
+  "homepage": "https://github.com/marcosperez85/transcripcion-con-resumen#readme",
+  "description": "",
+  "dependencies": {
+    "@popperjs/core": "^2.11.8",
+    "bootstrap": "^5.3.5"
+  }
+}
