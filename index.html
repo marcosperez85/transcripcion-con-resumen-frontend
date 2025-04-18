@@ -1,35 +1,29 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel='stylesheet' type='text/css' media='screen' href='style.css'>
-    <title>Transcripción y Resumen</title>
+  <meta charset="UTF-8">
+  <title>Transcriptor de Audios</title>
+  <link rel="stylesheet" href="./node_modules/bootstrap/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="./css/styles.css">
 </head>
 
 <body>
-    <div class="contenedorGeneral">
-        <h1>Transcripción y Resumen de Audios</h1>
-        <div class="contenedorDeCuadros">
+  <div class="container mt-5">
+    <h1 class="mb-4 text-center text-primary">Transcriptor de Audios</h1>
+    
+    <form id="uploadForm">
+      <div class="mb-3">
+        <label for="audioFile" class="form-label">Seleccionar archivo de audio (MP3):</label>
+        <input class="form-control" type="file" id="audioFile" accept="audio/mpeg">
+      </div>
+      <button type="submit" class="btn btn-primary">Enviar</button>
+    </form>
 
+    <div id="status" class="mt-4"></div>
+  </div>
 
-            <label for="bucketName">Nombre del Bucket S3:</label>
-            <input type="text" id="bucketName" placeholder="Ingrese el nombre del bucket">
-
-            <label for="fileUpload">Seleccionar archivo MP3:</label>
-            <input type="file" id="fileUpload" accept="audio/mpeg">
-
-            <button id="uploadBtn">Subir Archivo</button>
-
-            <h3>Transcripción</h3>
-            <textarea id="transcription" readonly></textarea>
-
-            <h3>Resumen</h3>
-            <textarea id="summary" readonly></textarea>
-        </div>
-    </div>
-
+  <script src="./node_modules/@popperjs/core/dist/umd/popper.min.js"></script>
+  <script src="./node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+  <script src="./js/main.js"></script>
 </body>
-
 </html>
