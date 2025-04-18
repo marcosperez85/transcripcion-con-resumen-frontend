@@ -1,0 +1,84 @@
+:root {
+    --alto-container: 5rem;
+    --ancho-container: 50vw;
+    --ancho-boxes: 45vw;
+    --alto-boton: 2rem;
+    --alto-inputbox: 2rem;
+    --alto-box-transcripcion: 40rem;
+    --alto-box-resumen: 40rem;
+    --font-size-h1: 1.5rem;
+    --font-size-h2: 1.2rem;
+}
+
+h1 {
+    font-size: 1.5rem;
+}
+
+body {
+    display: flex;
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 20px;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+h2,h3 {
+    margin-bottom: -0.5rem;
+    font-size: var(--font-size-h2);
+}
+
+.contenedorGeneral {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-around;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: var(--ancho-container);
+}
+
+.contenedorDeCuadros {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    width: var(--ancho-boxes);
+    margin-bottom: 1rem;
+    /* border: 1px solid blue; */
+}
+
+#fileUpload {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    cursor: pointer;
+}
+
+input, button, textarea {
+    width: var(--ancho-boxes);
+    border: 1px solid #ccc;
+    height: var(--alto-inputbox);
+    border-radius: 4px;
+}
+
+
+
+button {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    cursor: pointer;
+    height: var(--alto-boton);
+}
+
+button:hover {
+    background-color: #218838;
+}
+
+textarea {
+    height: 100px;
+    resize: none;
+}

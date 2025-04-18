@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel='stylesheet' type='text/css' media='screen' href='style.css'>
+    <title>Transcripción y Resumen</title>
+</head>
+
+<body>
+    <div class="contenedorGeneral">
+        <h1>Transcripción y Resumen de Audios</h1>
+        <div class="contenedorDeCuadros">
+
+
+            <label for="bucketName">Nombre del Bucket S3:</label>
+            <input type="text" id="bucketName" placeholder="Ingrese el nombre del bucket">
+
+            <label for="fileUpload">Seleccionar archivo MP3:</label>
+            <input type="file" id="fileUpload" accept="audio/mpeg">
+
+            <button id="uploadBtn">Subir Archivo</button>
+
+            <h3>Transcripción</h3>
+            <textarea id="transcription" readonly></textarea>
+
+            <h3>Resumen</h3>
+            <textarea id="summary" readonly></textarea>
+        </div>
+    </div>
+
+</body>
+
+</html>
