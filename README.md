@@ -30,6 +30,8 @@ git clone https://github.com/tu-usuario/transcripcion-con-resumen-frontend.git
 cd transcripcion-con-resumen-frontend
 
 2. **Instalá las dependencias con la siguiente línea**
+
+```bash
 npm install
 
 Asegurate de tener Node.js instalado. Si no lo tenés, descargalo desde nodejs.org
