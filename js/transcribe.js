@@ -1,4 +1,3 @@
-// transcribe.js
 export async function iniciarTranscripcion(bucketName, fileKey, languageCode, maxSpeakers) {
     const apiUrl = "https://53h3319jii.execute-api.us-east-2.amazonaws.com/default/proyecto1-transcribir-audios";
 
