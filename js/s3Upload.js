@@ -1,0 +1,21 @@
+import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+import { getCognitoCredentials } from './cognitoAuth.js';
+
+const REGION = "us-east-2";
+const BUCKET_NAME = "tu-bucket-s3";
+
+export async function uploadFileToS3(file, key) {
+    const s3 = new S3Client({
+      region: REGION,
+      credentials: getCognitoCredentials()
+    });
+  
+    const command = new PutObjectCommand({
+      Bucket: BUCKET_NAME,
+      Key: key,
+      Body: file,
+      ContentType: file.type
+    });
+  
+    await s3.send(command);
+}
