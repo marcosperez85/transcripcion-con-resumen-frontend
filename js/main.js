@@ -24,7 +24,7 @@ $formulario.addEventListener('submit', async (e) => {
     await uploadFileToS3(file, key);
     console.log("Archivo subido correctamente");
 
-    const transcripcion = await iniciarTranscripcion(file.name, idioma, speakers);
+    const transcripcion = await iniciarTranscripcion("transcripcion-con-resumen", key, idioma, speakers);
     console.log("Transcripción iniciada:", transcripcion);
   } catch (error) {
     console.error("Error:", error);
