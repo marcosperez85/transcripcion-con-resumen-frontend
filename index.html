@@ -6,6 +6,10 @@
   <title>Transcriptor de Audios</title>
   <link rel="stylesheet" href="./node_modules/bootstrap/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="./css/styles.css">
+
+  <script src="https://unpkg.com/@aws-sdk/client-s3-browser"></script>
+  <script src="https://unpkg.com/@aws-sdk/credential-provider-cognito-identity-browser"></script>
+  <script src="https://unpkg.com/@aws-sdk/client-cognito-identity-browser"></script>
 </head>
 
 <body>
@@ -27,7 +31,7 @@
         <label for="speakers" class="form-label">Cantidad de hablantes (1-10):</label>
         <input class="form-control" type="number" id="speakers" min="1" max="10" value="2">
       </div>
-      
+
       <button type="submit" class="btn btn-primary">Enviar</button>
     </form>
     <div id="status" class="mt-4"></div>
