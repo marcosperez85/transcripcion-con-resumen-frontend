@@ -2,7 +2,7 @@ import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import { getCognitoCredentials } from './cognitoAuth.js';
 
 const REGION = "us-east-2";
-const BUCKET_NAME = "transcripcion-con-resumen";
+const BUCKET_NAME = "transcripcion-con-resumen/audios";
 
 export async function uploadFileToS3(file, key) {
     const s3 = new S3Client({
