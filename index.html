@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8">
   <title>Transcriptor de Audios</title>
@@ -10,20 +11,32 @@
 <body>
   <div class="container mt-5">
     <h1 class="mb-4 text-center text-primary">Transcriptor de Audios</h1>
-    
+
     <form id="uploadForm">
       <div class="mb-3">
         <label for="audioFile" class="form-label">Seleccionar archivo de audio (MP3):</label>
         <input class="form-control" type="file" id="audioFile" accept="audio/mpeg">
       </div>
+
+      <div class="mb-3">
+        <label for="idioma" class="form-label">Idioma (por ejemplo: es-ES, en-US):</label>
+        <input class="form-control" type="text" id="idioma" placeholder="es-ES">
+      </div>
+
+      <div class="mb-3">
+        <label for="speakers" class="form-label">Cantidad de hablantes (1-10):</label>
+        <input class="form-control" type="number" id="speakers" min="1" max="10" value="2">
+      </div>
+      
       <button type="submit" class="btn btn-primary">Enviar</button>
     </form>
-
     <div id="status" class="mt-4"></div>
+
   </div>
 
   <script type="module" src="./node_modules/@popperjs/core/dist/umd/popper.min.js"></script>
   <script type="module" src="./node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
   <script type="module" src="./js/main.js"></script>
 </body>
+
 </html>
