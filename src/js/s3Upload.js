@@ -5,12 +5,13 @@ const REGION = "us-east-2";
 const BUCKET_NAME = "transcripcion-con-resumen";
 
 export async function uploadFileToS3(file, key) {
-    const s3 = new AWS.S3Client({
+    const s3 = new S3Client({
       region: REGION,
+      forcePathStyle: true,
       credentials: getCognitoCredentials()
     });
   
-    const command = new AWS.PutObjectCommand({
+    const command = new PutObjectCommand({
       Bucket: BUCKET_NAME,
       Key: key,
       Body: file,
