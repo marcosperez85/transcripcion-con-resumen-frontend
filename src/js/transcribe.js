@@ -22,5 +22,12 @@ export async function iniciarTranscripcion(bucketName, fileKey, languageCode, ma
         throw new Error(`Error ${response.status}: ${response.statusText}`);
     }
 
-    return await response.json();
+    // Parsear la respuesta
+    const data = await response.json();
+
+    // Trabajar con el objeto completo que vino del backend
+    const jobName = data.jobName;
+    console.log(`El Job Name recibido es: ${jobName}`);
+
+    return jobName
 }
