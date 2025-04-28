@@ -19,6 +19,11 @@ $formulario.addEventListener('submit', async (e) => {
     return;
   }
 
+  if (!idiomaInput.value.trim()) {
+    alert("Por favor ingresá un idioma válido (por ejemplo, es-ES para español o en-US para inglés).");
+    return;
+  }
+
   const file = fileInput.files[0];
   const key = `audios/${file.name}`;
   const idioma = idiomaInput.value;
