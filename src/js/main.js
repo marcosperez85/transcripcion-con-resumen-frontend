@@ -1,6 +1,10 @@
 import { uploadFileToS3 } from './s3Upload.js';
 import { iniciarTranscripcion } from './transcribe.js';
 
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+
+
 const $formulario = document.getElementById('uploadForm');
 
 $formulario.addEventListener('submit', async (e) => {
