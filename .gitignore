@@ -1,1 +1,20 @@
-node_modules
+# node_modules (donde están tus librerías instaladas)
+node_modules/
+
+# Vite build output (si en el futuro hacés un build de producción)
+dist/
+
+# Archivos de Vite de caché
+.vite/
+
+# Archivos de logs
+*.log
+
+# Archivos de sistema
+.DS_Store  # (si usás Mac)
+Thumbs.db  # (si usás Windows)
+
+# Archivos de entorno
+.env
+.env.local
+.env.*.local
