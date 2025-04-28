@@ -1,3 +1,6 @@
+import { fromCognitoIdentityPool } from "@aws-sdk/credential-provider-cognito-identity";
+import { CognitoIdentityClient } from "@aws-sdk/client-cognito-identity";
+
 export function getCognitoCredentials() {
   return AWS.fromCognitoIdentityPool({
     client: new AWS.CognitoIdentityClient({ region: "us-east-2" }),
