@@ -5,6 +5,9 @@ import { getCognitoCredentials } from './cognitoAuth.js';
 const REGION = "us-east-2";
 const BUCKET_NAME = "transcripcion-con-resumen";
 
+// Importante configurar el CORS en la pestaña de Permissions dentro del bucket para que admita el origen desde el cual 
+// se realiza el upload
+
 export async function uploadFileToS3(file, key) {
     const s3 = new S3Client({
         region: REGION,
