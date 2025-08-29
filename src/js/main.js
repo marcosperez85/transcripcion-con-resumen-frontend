@@ -1,11 +1,13 @@
 import { uploadFileToS3 } from './s3Upload.js';
 import { iniciarTranscripcion } from './transcribe.js';
+import { formatearTranscripcion } from './formatear.js';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
 
 const $formulario = document.getElementById('uploadForm');
+const nombreDelBucket = "transcripcion-con-resumen";
 
 $formulario.addEventListener('submit', async (e) => {
   e.preventDefault();
@@ -33,8 +35,11 @@ $formulario.addEventListener('submit', async (e) => {
     await uploadFileToS3(file, key);
     console.log("Archivo subido correctamente");
 
-    const transcripcion = await iniciarTranscripcion("transcripcion-con-resumen", key, idioma, speakers);
+    const transcripcion = await iniciarTranscripcion(nombreDelBucket, key, idioma, speakers);
     console.log("Transcripción iniciada:", transcripcion);
+
+    const nombreDelJob = transcripcion.job_name
+
   } catch (error) {
     console.error("Error:", error);
   }

@@ -37,3 +37,10 @@ npm install
 
 Asegurate de tener Node.js instalado. Si no lo tenés, descargalo desde nodejs.org
 
+3. **Iniciá Vite con la siguiente línea**
+
+```bash
+npx vite
+```
+Accede a la aplicación en http://localhost:5173
+
