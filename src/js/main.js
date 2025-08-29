@@ -35,9 +35,6 @@ $formulario.addEventListener('submit', async (e) => {
 
     const nombreDelJob = transcripcion.job_name
 
-    const formateandoTranscripcion = await formatearTranscripcion(nombreDelBucket, nombreDelJob, key);
-    console.log("Formateando transcripción", formateandoTranscripcion)
-
   } catch (error) {
     console.error("Error:", error);
   }
