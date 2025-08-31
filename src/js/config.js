@@ -1,8 +1,7 @@
 // Configuración de endpoints y constantes
 export const CONFIG = {
     // Estos valores se deben actualizar después del deploy del backend
-    WEBSOCKET_URL: "wss://33hhrplka3.execute-api.us-east-1.amazonaws.com/prod",
-    API_URL: "https://0nn249g9wd.execute-api.us-east-1.amazonaws.com/prod/transcribir",
+    WEBSOCKET_URL: "wss://kfvsnytf33.execute-api.us-east-1.amazonaws.com/prod",
     
     // Configuración S3
     REGION: "us-east-1",
