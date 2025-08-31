@@ -1,50 +1,163 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
-  <meta charset="UTF-8">
-  <title>Transcriptor de Audios</title>
-  <link rel="stylesheet" href="./css/styles.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transcripción y Resumen de Audios</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="./css/styles.css" rel="stylesheet">
 </head>
-
 <body>
-  <div class="container mt-5">
-    <h1 class="mb-4 text-center text-primary">Transcriptor de Audios</h1>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="bi bi-mic"></i> Transcripción y Resumen
+            </a>
+            <div id="connectionStatus" class="badge bg-secondary">Desconectado</div>
+        </div>
+    </nav>
 
-    <form id="uploadForm">
-      <div class="mb-3">
-        <label for="audioFile" class="form-label">Seleccionar archivo de audio (MP3):</label>
-        <input class="form-control" type="file" id="audioFile" accept="audio/mpeg">
-      </div>
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <!-- Información de sesión -->
+                <div id="sessionInfo" class="mb-3"></div>
+                
+                <!-- Formulario principal -->
+                <div class="card shadow">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">
+                            <i class="bi bi-upload"></i> Subir Audio para Transcripción
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <!-- Zona de drag & drop -->
+                        <div id="dropZone" onclick="document.getElementById('audioFile').click()">
+                            <i class="bi bi-cloud-upload fs-1 text-muted"></i>
+                            <p class="mt-3 mb-0">Arrastra tu archivo de audio aquí o haz clic para seleccionar</p>
+                            <small class="text-muted">Formatos soportados: MP3, WAV, FLAC, OGG, WebM, MP4, M4A (máx. 100MB)</small>
+                        </div>
 
-      <div class="mb-3">
-        <label for="idioma" class="form-label">Idioma (por ejemplo: es-ES, en-US):</label>
-        <input class="form-control" type="text" id="idioma" placeholder="es-ES">
-      </div>
+                        <form id="uploadForm" class="needs-validation" novalidate>
+                            <!-- Input de archivo -->
+                            <div class="mb-3">
+                                <label for="audioFile" class="form-label">
+                                    <i class="bi bi-file-music"></i> Archivo de Audio
+                                </label>
+                                <input type="file" 
+                                       class="form-control" 
+                                       id="audioFile" 
+                                       accept="audio/*" 
+                                       required>
+                                <div id="audioFileError" class="invalid-feedback"></div>
+                            </div>
 
-      <div class="mb-3">
-        <label for="speakers" class="form-label">Cantidad de hablantes (1-10):</label>
-        <input class="form-control" type="number" id="speakers" min="1" max="10" value="2">
-      </div>
+                            <!-- Información del archivo -->
+                            <div id="fileInfo" style="display: none;"></div>
 
-      <button type="submit" class="btn btn-primary">Enviar</button>
+                            <!-- Configuración de idioma -->
+                            <div class="mb-3">
+                                <label for="idioma" class="form-label">
+                                    <i class="bi bi-translate"></i> Código de Idioma
+                                </label>
+                                <input type="text" 
+                                       class="form-control" 
+                                       id="idioma" 
+                                       placeholder="es-ES" 
+                                       value="es-ES"
+                                       required>
+                                <div id="idiomaError" class="invalid-feedback"></div>
+                                <div class="form-text">
+                                    Ejemplos: es-ES (Español), en-US (Inglés), fr-FR (Francés)
+                                </div>
+                            </div>
 
-      <div class="mb-3">
-        <label for="transcription">Transcripcion</label>
-        <textarea id="transcription" class="form-control" readonly></textarea>
-      </div>
+                            <!-- Número de speakers -->
+                            <div class="mb-3">
+                                <label for="speakers" class="form-label">
+                                    <i class="bi bi-people"></i> Número de Speakers
+                                </label>
+                                <input type="number" 
+                                       class="form-control" 
+                                       id="speakers" 
+                                       min="1" 
+                                       max="10" 
+                                       value="2"
+                                       required>
+                                <div id="speakersError" class="invalid-feedback"></div>
+                                <div class="form-text">
+                                    Número estimado de personas hablando en el audio (1-10)
+                                </div>
+                            </div>
 
-      <div class="mb-3">
-        <label for="summary">Summary</label>
-        <textarea id="summary" class="form-control" readonly></textarea>
-      </div>
+                            <!-- Botones -->
+                            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                <button type="button" 
+                                        id="clearButton" 
+                                        class="btn btn-outline-secondary">
+                                    <i class="bi bi-trash"></i> Limpiar
+                                </button>
+                                <button type="button" 
+                                        id="reconnectButton" 
+                                        class="btn btn-outline-primary">
+                                    <i class="bi bi-arrow-clockwise"></i> Reconectar
+                                </button>
+                                <button type="submit" 
+                                        id="submitButton" 
+                                        class="btn btn-primary">
+                                    <i class="bi bi-upload"></i> Procesar Audio
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
 
-    </form>
-    <div id="status" class="mt-4"></div>
+                <!-- Progreso -->
+                <div id="progressContainer" class="progress-container" style="display: none;">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span id="progressText">Procesando...</span>
+                                <span id="progressPercentage">0%</span>
+                            </div>
+                            <div class="progress">
+                                <div id="progressBar" 
+                                     class="progress-bar progress-bar-striped progress-bar-animated" 
+                                     role="progressbar" 
+                                     style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-  </div>
+                <!-- Información del job -->
+                <div id="jobInfo" style="display: none;"></div>
 
-  <script type="module" src="./js/main.js"></script>
+                <!-- Resultados -->
+                <div id="results" class="results-container" style="display: none;">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">
+                                <i class="bi bi-check-circle text-success"></i> Resultados
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div id="resultsContent"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Errores -->
+                <div id="error" style="display: none;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Container para toasts -->
+    <div id="toastContainer" class="toast-container position-fixed top-0 end-0 p-3"></div>
+
+    <!-- Scripts -->
+    <script type="module" src="./js/main.js"></script>
 </body>
-
 </html>
