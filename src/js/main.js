@@ -3,9 +3,6 @@ import { iniciarTranscripcion } from './transcribe.js';
 // import { formatearTranscripcion } from './formatear.js';
 import WebSocketManager from './websocket.js';
 
-// import 'bootstrap/dist/css/bootstrap.min.css';
-// import 'bootstrap/dist/js/bootstrap.bundle.min.js';
-
 // Inicializar WebSocket Manager
 const wsManager = new WebSocketManager();
 
@@ -337,17 +334,6 @@ function setupFormValidation() {
 }
 
 function initializeUI() {
-    // Mostrar información de la sesión
-    // Dejé esto comentado porque esta info no suma al UI-UX 
-    // const sessionInfo = document.getElementById('sessionInfo');
-    // if (sessionInfo) {
-    //     sessionInfo.innerHTML = `
-    //         <small class="text-muted">
-    //             Sesión: <code>${wsManager.getSessionId()}</code>
-    //         </small>
-    //     `;
-    // }
-    
     // Configurar valores por defecto
     if ($idiomaInput && !$idiomaInput.value) {
         $idiomaInput.value = 'es-ES';
