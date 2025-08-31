@@ -13,7 +13,7 @@ const s3Client = new S3Client({
     }),
 });
 
-export async function uploadFileToS3(file, key) {
+export async function uploadFileToS3(file, key, sessionId, languageCode, maxSpeakers) {
     try {
         console.log(`Subiendo archivo ${file.name} a S3...`);
         
@@ -24,6 +24,14 @@ export async function uploadFileToS3(file, key) {
                 Key: key,
                 Body: file,
                 ContentType: file.type,
+                // Metadatos para el evento S3 que triggereará Transcribe
+                Metadata: {
+                    'session-id': sessionId,
+                    'language-code': languageCode,
+                    'max-speakers': maxSpeakers.toString()
+                },
+                // Tags para identificar el archivo
+                Tagging: `sessionId=${sessionId}&languageCode=${languageCode}&maxSpeakers=${maxSpeakers}`
             },
         });
 
