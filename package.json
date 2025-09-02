@@ -1,30 +1,11 @@
 {
   "name": "transcripcion-con-resumen",
-  "version": "1.0.0",
-  "main": "main.js",
+  "private": true,
+  "workspaces": ["frontend"],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/marcosperez85/transcripcion-con-resumen.git"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/marcosperez85/transcripcion-con-resumen/issues"
-  },
-  "homepage": "https://github.com/marcosperez85/transcripcion-con-resumen#readme",
-  "description": "",
-  "dependencies": {
-    "@aws-sdk/client-s3": "^3.797.0",
-    "@aws-sdk/credential-provider-cognito-identity": "^3.797.0",
-    "@aws-sdk/lib-storage": "^3.797.0",
-    "@popperjs/core": "^2.11.8",
-    "bootstrap": "^5.3.5"
-  },
-  "devDependencies": {
-    "vite": "^6.3.3"
+    "build:frontend": "npm -w frontend ci && npm -w frontend run build",
+    "synth": "npm run build:frontend && cd infra && cdk synth",
+    "deploy": "npm run build:frontend && cd infra && cdk deploy",
+    "destroy": "cd infra && cdk destroy --force"
   }
 }
