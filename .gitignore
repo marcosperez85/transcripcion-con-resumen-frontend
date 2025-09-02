@@ -1,18 +1,52 @@
-# Frontend
+# --- SO / archivos de sistema ---
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# --- IDE / editor ---
+.vscode/
+.idea/
+*.code-workspace
+*.sw?
+*.swo
+*.swp
+
+# --- Logs ---
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# --- Variables de entorno ---
+.env
+.env.*
+!.env.example
+
+# --- Node / Workspaces ---
+node_modules/
+
+# --- Frontend (Vite) ---
 frontend/node_modules/
 frontend/dist/
+frontend/.vite/
+frontend/.cache/
+frontend/.eslintcache
 
-# CDK / Python
+# --- Python / CDK ---
 infra/.venv/
 infra/cdk.out/
 __pycache__/
-*.pyc
+*.py[cod]
+*.pyo
+*.egg-info/
+.mypy_cache/
+.pytest_cache/
+.tox/
+.coverage
+coverage/
 
-# SO / IDE
-.DS_Store
-*.log
-.vscode/
-.idea/
-
-node_modules/
-
+# --- Archivos temporales / backups ---
+*.tmp
+*.orig
+*~
