@@ -1,20 +1,16 @@
-# node_modules (donde están tus librerías instaladas)
-node_modules/
+# Frontend
+frontend/node_modules/
+frontend/dist/
 
-# Vite build output (si en el futuro hacés un build de producción)
-dist/
+# CDK / Python
+infra/.venv/
+infra/cdk.out/
+__pycache__/
+*.pyc
 
-# Archivos de Vite de caché
-.vite/
-
-# Archivos de logs
+# SO / IDE
+.DS_Store
 *.log
+.vscode/
+.idea/
 
-# Archivos de sistema
-.DS_Store  # (si usás Mac)
-Thumbs.db  # (si usás Windows)
-
-# Archivos de entorno
-.env
-.env.local
-.env.*.local
