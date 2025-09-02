@@ -1,7 +1,7 @@
 from pathlib import Path
 from constructs import Construct
 from aws_cdk import (
-    Stack,
+    Stack, CfnOutput,
     RemovalPolicy,
     aws_s3 as s3,
     aws_cloudfront as cloudfront,
@@ -50,3 +50,13 @@ class FrontendInfraStack(Stack):
             distribution=distribution,
             distribution_paths=["/*"],
         )
+
+        CfnOutput(self, "CloudFrontURL",
+                  value=f"https://{distribution.domain_name}",
+                  description="URL pública del sitio")
+        
+        CfnOutput(self, "DistributionId",
+                  value=distribution.distribution_id)
+        
+        CfnOutput(self, "BucketName",
+                  value=website_bucket.bucket_name)
