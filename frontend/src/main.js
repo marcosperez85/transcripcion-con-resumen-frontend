@@ -44,6 +44,9 @@ async function pollTranscriptionStatus(jobName) {
     const poll = async () => {
         try {
             const status = await checkTranscriptionStatus(jobName);
+            
+            // Esto es sólo para ver qué llegó realmente
+            console.log("Status payload:", status);
 
             // Mostramos estado de Transcribe y de los artefactos en S3:
             statusText.textContent =
