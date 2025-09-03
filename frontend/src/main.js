@@ -50,9 +50,9 @@ async function pollTranscriptionStatus(jobName) {
 
             // Mostramos estado de Transcribe y de los artefactos en S3:
             statusText.textContent =
-                `Transcripción: ${status.status} • `
-                    `Formateo: ${status.formattedReady ? 'listo' : 'procesando'} • `
-                    `Resumen: ${status.summaryReady ? 'listo' : 'procesando'}`;
+                'Transcripción: ' + status.status +
+                    'Formateo: ' + (status.formattedReady ? 'listo' : 'procesando') +
+                    'Resumen: ' + (status.summaryReady ? 'listo' : 'procesando');
 
             if (status.status === 'FAILED') {
                 statusText.textContent = 'Error en la transcripción';
