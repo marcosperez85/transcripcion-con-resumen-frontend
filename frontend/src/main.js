@@ -73,12 +73,12 @@ function renderStatusPills(transcriptionStatus, formattedReady, summaryReady) {
     const fDone = !!formattedReady;
     const sDone = !!summaryReady;
 
-    const icon = (done, fail=false) => {
+    const icon = (done, fail = false) => {
         if (fail) return '<i class="fas fa-circle-xmark"></i>';
         return done ? '<i class="fas fa-circle-check"></i>' : '<i class="fas fa-spinner fa-spin"></i>';
     };
 
-    const pill = (label, done, fail=false) => `
+    const pill = (label, done, fail = false) => `
         <div class="status-pill ${done ? 'done' : ''} ${fail ? 'error' : ''}">
             ${icon(done, fail)} <span>${label}${fail ? ': error' : done ? ': listo' : ': procesando'}</span>
         </div>
@@ -181,6 +181,13 @@ async function pollTranscriptionStatus(jobName) {
     const maxPollAttempts = 150; // 5 minutos máximo (150 * 2 segundos)
 
     const poll = async () => {
+        const transcriptionStatus = status.status || status.TranscriptionJobStatus;
+        const formattedReady = status.formattedReady || false;
+        const summaryReady = status.summaryReady || false;
+
+        document.getElementById('statusText').innerHTML =
+            renderStatusPills(transcriptionStatus || 'IN_PROGRESS', formattedReady, summaryReady);
+
         try {
             pollAttempts++;
             console.log(`Poll attempt ${pollAttempts} for job: ${jobName}`);
@@ -222,7 +229,7 @@ async function pollTranscriptionStatus(jobName) {
             showStatusBar(statusMessage);
 
             if (transcriptionStatus === 'FAILED') {
-                showStatusBar('Error en la transcripción');
+                showStatusBar(renderStatusPills('FAILED', formattedReady, summaryReady));
                 document.getElementById('statusBar').style.background = 'linear-gradient(135deg, #ff6b6b, #ee5a52)';
                 processingInProgress = false;
                 return;
@@ -277,6 +284,9 @@ async function pollTranscriptionStatus(jobName) {
 }
 
 function displayResults(results) {
+    // Ocultar barra de resultados luego de 2 o 3 segundos
+    setTimeout(() => hideStatusBar(), 2500);
+
     console.log("Displaying results:", results);
 
     const transcriptionText = document.getElementById('transcriptionText');
