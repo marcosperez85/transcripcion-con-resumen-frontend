@@ -20,9 +20,9 @@ function initializeUI() {
 function createFileUploadHandlers() {
     const fileInput = document.getElementById('audioFile');
     const wrapper = document.querySelector('.file-input-wrapper');
-    
+
     if (!wrapper || !fileInput) return; // Guard clause
-    
+
     // Drag and drop handlers
     ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
         wrapper.addEventListener(eventName, preventDefaults, false);
@@ -69,7 +69,7 @@ function updateFileLabel(file) {
 function showStatusBar(message) {
     const statusBar = document.getElementById('statusBar');
     const statusText = document.getElementById('statusText');
-    
+
     if (statusText) statusText.textContent = message;
     if (statusBar) {
         statusBar.classList.add('show');
@@ -90,7 +90,7 @@ function hideStatusBar() {
 }
 
 function createResultsContainer() {
-   let resultsContainer = document.getElementById('resultsContainer');
+    let resultsContainer = document.getElementById('resultsContainer');
 
     // Si ya existe, sólo reseteamos textos/estados y salimos
     if (resultsContainer) {
@@ -154,7 +154,7 @@ async function pollTranscriptionStatus(jobName) {
         try {
             pollAttempts++;
             console.log(`Poll attempt ${pollAttempts} for job: ${jobName}`);
-            
+
             if (pollAttempts > maxPollAttempts) {
                 showStatusBar('Tiempo de espera agotado');
                 document.getElementById('statusBar').style.background = 'linear-gradient(135deg, #ff6b6b, #ee5a52)';
@@ -202,14 +202,18 @@ async function pollTranscriptionStatus(jobName) {
             if (transcriptionStatus === 'COMPLETED' && formattedReady && summaryReady) {
                 console.log("All processes completed, fetching results...");
                 showStatusBar('Obteniendo resultados...');
-                
+
                 try {
                     const results = await getTranscriptionResults(nombreDelBucket, jobName);
                     console.log("Results received:", results);
-                    
+
                     if (results && (results.transcription || results.summary)) {
                         hideStatusBar();
                         displayResults(results);
+
+                        // Llevar foco visual a resultados con un scroll suave
+                        const rc = document.getElementById('resultsContainer');
+                        if (rc) rc.scrollIntoView({ behavior: 'smooth', block: 'start' });
                         processingInProgress = false;
                         return;
                     } else {
@@ -232,7 +236,7 @@ async function pollTranscriptionStatus(jobName) {
             console.error('Error checking status:', error);
             showStatusBar(`Error: ${error.message}`);
             document.getElementById('statusBar').style.background = 'linear-gradient(135deg, #ff6b6b, #ee5a52)';
-            
+
             // Retry on error, but with exponential backoff
             const retryDelay = Math.min(5000, 1000 * Math.pow(1.5, pollAttempts - 1));
             setTimeout(poll, retryDelay);
@@ -244,7 +248,7 @@ async function pollTranscriptionStatus(jobName) {
 
 function displayResults(results) {
     console.log("Displaying results:", results);
-    
+
     const transcriptionText = document.getElementById('transcriptionText');
     const summaryText = document.getElementById('summaryText');
 
