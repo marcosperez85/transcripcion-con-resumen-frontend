@@ -66,17 +66,47 @@ function updateFileLabel(file) {
     }
 }
 
-function showStatusBar(message) {
+function renderStatusPills(transcriptionStatus, formattedReady, summaryReady) {
+    // Estados derivados
+    const tDone = transcriptionStatus === 'COMPLETED';
+    const tFail = transcriptionStatus === 'FAILED';
+    const fDone = !!formattedReady;
+    const sDone = !!summaryReady;
+
+    const icon = (done, fail=false) => {
+        if (fail) return '<i class="fas fa-circle-xmark"></i>';
+        return done ? '<i class="fas fa-circle-check"></i>' : '<i class="fas fa-spinner fa-spin"></i>';
+    };
+
+    const pill = (label, done, fail=false) => `
+        <div class="status-pill ${done ? 'done' : ''} ${fail ? 'error' : ''}">
+            ${icon(done, fail)} <span>${label}${fail ? ': error' : done ? ': listo' : ': procesando'}</span>
+        </div>
+    `;
+
+    return `
+      <div class="status-pills">
+        ${pill('Transcripción', tDone, tFail)}
+        ${pill('Formateo', fDone)}
+        ${pill('Resumen', sDone)}
+      </div>
+    `;
+}
+
+function showStatusBar(messageOrHtml) {
     const statusBar = document.getElementById('statusBar');
     const statusText = document.getElementById('statusText');
+    if (!statusBar || !statusText) return;
 
-    if (statusText) statusText.textContent = message;
-    if (statusBar) {
-        statusBar.classList.add('show');
-        statusBar.style.display = 'block';
-        // Reset background color
-        statusBar.style.background = '';
+    if (typeof messageOrHtml === 'string') {
+        statusText.innerHTML = messageOrHtml; // permite cadenas simples
+    } else {
+        statusText.innerHTML = ''; // fallback
     }
+
+    statusBar.classList.add('show');
+    statusBar.style.display = 'block';
+    statusBar.style.background = ''; // reset
 }
 
 function hideStatusBar() {
