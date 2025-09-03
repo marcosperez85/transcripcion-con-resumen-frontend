@@ -44,15 +44,21 @@ async function pollTranscriptionStatus(jobName) {
     const poll = async () => {
         try {
             const status = await checkTranscriptionStatus(jobName);
-            
+
             // Esto es sólo para ver qué llegó realmente
             console.log("Status payload:", status);
+
+            if (!status || typeof status !== 'object' || typeof status.status !== 'string') {
+                statusText.textContent = 'Esperando estado…';
+                setTimeout(poll, 2000);
+                return;
+            }
 
             // Mostramos estado de Transcribe y de los artefactos en S3:
             statusText.textContent =
                 'Transcripción: ' + status.status +
-                    'Formateo: ' + (status.formattedReady ? 'listo' : 'procesando') +
-                    'Resumen: ' + (status.summaryReady ? 'listo' : 'procesando');
+                'Formateo: ' + (status.formattedReady ? 'listo' : 'procesando') +
+                'Resumen: ' + (status.summaryReady ? 'listo' : 'procesando');
 
             if (status.status === 'FAILED') {
                 statusText.textContent = 'Error en la transcripción';
