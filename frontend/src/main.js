@@ -5,9 +5,10 @@ import { formatearTranscripcion } from './formatear.js';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
-
 const $formulario = document.getElementById('uploadForm');
-const nombreDelBucket = "transcripcion-con-resumen";
+
+// Nombre del bucket DESTINO donde se va a alojar el audio, transcripción y resúmenes
+const nombreDelBucket = "transcripcion-con-resumen-backend";
 
 $formulario.addEventListener('submit', async (e) => {
   e.preventDefault();
