@@ -1,5 +1,5 @@
 export async function formatearTranscripcion(nombreDelBucket, nombreDelJob, fileKey) {
-    const apiUrl = "https://pvpva3kjdl.execute-api.us-east-1.amazonaws.com/prod/transcribir";
+    const apiUrl = "https://yfoulcwp9a.execute-api.us-east-1.amazonaws.com/prod/transcribir";
 
     const body = {
         s3: {
