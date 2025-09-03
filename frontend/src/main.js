@@ -56,14 +56,14 @@ async function pollTranscriptionStatus(jobName) {
 
             // Mostramos estado de Transcribe y de los artefactos en S3:
             statusText.textContent =
-                'Transcripción: ' + status.status +
-                'Formateo: ' + (status.formattedReady ? 'listo' : 'procesando') +
+                'Transcripción: ' + status.status + ' | ' + 
+                'Formateo: ' + (status.formattedReady ? 'listo' : 'procesando') + ' | ' +
                 'Resumen: ' + (status.summaryReady ? 'listo' : 'procesando');
 
             if (status.status === 'FAILED') {
                 statusText.textContent = 'Error en la transcripción';
                 statusDisplay.className = 'alert alert-danger';
-                return; // Stop polling
+                return; // Stop polling on failure
             }
 
             if (status.status === 'COMPLETED' && status.formattedReady && status.summaryReady) {
@@ -71,12 +71,11 @@ async function pollTranscriptionStatus(jobName) {
                 const results = await getTranscriptionResults(nombreDelBucket, jobName);
                 displayResults(results);
                 statusDisplay.style.display = 'none';
-                return; // Stop polling
-
-                // Continue polling if still in progress
-                setTimeout(poll, 2000); // Poll every 2 seconds
-
+                return; // Stop polling on success
             }
+
+            // Continue polling if still in progress
+            setTimeout(poll, 2000); // Poll every 2 seconds
         }
         catch (error) {
             console.error('Error checking status:', error);
