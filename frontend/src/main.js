@@ -9,6 +9,9 @@ import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 const $formulario = document.getElementById('uploadForm');
 const nombreDelBucket = "transcripcion-con-resumen-backend";
 
+// Variable para evitar múltiples procesos simultáneos
+let processingInProgress = false;
+
 // Crear barra de estado y contenedor de resultados
 function initializeUI() {
     createFileUploadHandlers();
@@ -17,6 +20,8 @@ function initializeUI() {
 function createFileUploadHandlers() {
     const fileInput = document.getElementById('audioFile');
     const wrapper = document.querySelector('.file-input-wrapper');
+    
+    if (!wrapper || !fileInput) return; // Guard clause
     
     // Drag and drop handlers
     ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
@@ -53,36 +58,58 @@ function createFileUploadHandlers() {
 
 function updateFileLabel(file) {
     const overlay = document.querySelector('.file-input-overlay');
-    overlay.innerHTML = `
-        <i class="fas fa-file-audio"></i>
-        <span><strong>${file.name}</strong> (${(file.size / 1024 / 1024).toFixed(2)} MB)</span>
-    `;
+    if (overlay) {
+        overlay.innerHTML = `
+            <i class="fas fa-file-audio"></i>
+            <span><strong>${file.name}</strong> (${(file.size / 1024 / 1024).toFixed(2)} MB)</span>
+        `;
+    }
 }
 
 function showStatusBar(message) {
     const statusBar = document.getElementById('statusBar');
     const statusText = document.getElementById('statusText');
     
-    statusText.textContent = message;
-    statusBar.classList.add('show');
-    statusBar.style.display = 'block';
+    if (statusText) statusText.textContent = message;
+    if (statusBar) {
+        statusBar.classList.add('show');
+        statusBar.style.display = 'block';
+        // Reset background color
+        statusBar.style.background = '';
+    }
 }
 
 function hideStatusBar() {
     const statusBar = document.getElementById('statusBar');
-    statusBar.classList.remove('show');
-    setTimeout(() => {
-        statusBar.style.display = 'none';
-    }, 300);
+    if (statusBar) {
+        statusBar.classList.remove('show');
+        setTimeout(() => {
+            statusBar.style.display = 'none';
+        }, 300);
+    }
 }
 
 function createResultsContainer() {
-    const existingContainer = document.getElementById('resultsContainer');
-    if (existingContainer) {
-        existingContainer.remove();
+   let resultsContainer = document.getElementById('resultsContainer');
+
+    // Si ya existe, sólo reseteamos textos/estados y salimos
+    if (resultsContainer) {
+        const transcriptionText = resultsContainer.querySelector('#transcriptionText');
+        const summaryText = resultsContainer.querySelector('#summaryText');
+        if (transcriptionText) {
+            transcriptionText.classList.add('loading-pulse');
+            transcriptionText.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Procesando transcripción...';
+        }
+        if (summaryText) {
+            summaryText.classList.add('loading-pulse');
+            summaryText.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Generando resumen...';
+        }
+        resultsContainer.style.display = 'block';
+        return resultsContainer;
     }
 
-    const resultsContainer = document.createElement('div');
+    // Si no existe, lo creamos una sola vez
+    resultsContainer = document.createElement('div');
     resultsContainer.id = 'resultsContainer';
     resultsContainer.className = 'row justify-content-center';
     resultsContainer.innerHTML = `
@@ -97,7 +124,7 @@ function createResultsContainer() {
                         <i class="fas fa-spinner fa-spin me-2"></i>Procesando transcripción...
                     </div>
                 </div>
-                
+
                 <div id="summarySection" class="mt-4">
                     <div class="results-header">
                         <i class="fas fa-compress-alt"></i>
@@ -112,46 +139,103 @@ function createResultsContainer() {
     `;
 
     const container = document.querySelector('.container');
-    container.appendChild(resultsContainer);
+    if (container) container.appendChild(resultsContainer);
+    return resultsContainer;
 }
 
 async function pollTranscriptionStatus(jobName) {
     showStatusBar('Iniciando transcripción...');
     createResultsContainer();
 
+    let pollAttempts = 0;
+    const maxPollAttempts = 150; // 5 minutos máximo (150 * 2 segundos)
+
     const poll = async () => {
         try {
+            pollAttempts++;
+            console.log(`Poll attempt ${pollAttempts} for job: ${jobName}`);
+            
+            if (pollAttempts > maxPollAttempts) {
+                showStatusBar('Tiempo de espera agotado');
+                document.getElementById('statusBar').style.background = 'linear-gradient(135deg, #ff6b6b, #ee5a52)';
+                processingInProgress = false;
+                return;
+            }
+
             const status = await checkTranscriptionStatus(jobName);
             console.log("Status payload:", status);
 
-            if (!status || typeof status !== 'object' || typeof status.status !== 'string') {
-                showStatusBar('Esperando estado...');
+            if (!status) {
+                console.log("No status received, retrying...");
+                showStatusBar('Esperando respuesta del servidor...');
+                setTimeout(poll, 3000); // Wait a bit longer if no response
+                return;
+            }
+
+            // Verificar si status tiene la estructura esperada
+            if (typeof status !== 'object') {
+                console.log("Invalid status format:", status);
+                showStatusBar('Esperando estado válido...');
                 setTimeout(poll, 2000);
                 return;
             }
 
+            // El status puede venir directamente o dentro de una propiedad
+            const transcriptionStatus = status.status || status.TranscriptionJobStatus;
+            const formattedReady = status.formattedReady || false;
+            const summaryReady = status.summaryReady || false;
+
+            console.log("Parsed status:", { transcriptionStatus, formattedReady, summaryReady });
+
             // Actualizar barra de estado
-            const statusMessage = `Transcripción: ${status.status} | Formateo: ${status.formattedReady ? 'listo' : 'procesando'} | Resumen: ${status.summaryReady ? 'listo' : 'procesando'}`;
+            const statusMessage = `Transcripción: ${transcriptionStatus || 'iniciando'} | Formateo: ${formattedReady ? 'listo' : 'procesando'} | Resumen: ${summaryReady ? 'listo' : 'procesando'}`;
             showStatusBar(statusMessage);
 
-            if (status.status === 'FAILED') {
+            if (transcriptionStatus === 'FAILED') {
                 showStatusBar('Error en la transcripción');
                 document.getElementById('statusBar').style.background = 'linear-gradient(135deg, #ff6b6b, #ee5a52)';
+                processingInProgress = false;
                 return;
             }
 
-            if (status.status === 'COMPLETED' && status.formattedReady && status.summaryReady) {
-                hideStatusBar();
-                const results = await getTranscriptionResults(nombreDelBucket, jobName);
-                displayResults(results);
-                return;
+            // Verificar si todo está completo
+            if (transcriptionStatus === 'COMPLETED' && formattedReady && summaryReady) {
+                console.log("All processes completed, fetching results...");
+                showStatusBar('Obteniendo resultados...');
+                
+                try {
+                    const results = await getTranscriptionResults(nombreDelBucket, jobName);
+                    console.log("Results received:", results);
+                    
+                    if (results && (results.transcription || results.summary)) {
+                        hideStatusBar();
+                        displayResults(results);
+                        processingInProgress = false;
+                        return;
+                    } else {
+                        console.log("No results in response, retrying...");
+                        setTimeout(poll, 2000);
+                        return;
+                    }
+                } catch (error) {
+                    console.error('Error fetching results:', error);
+                    showStatusBar('Error obteniendo resultados, reintentando...');
+                    setTimeout(poll, 3000);
+                    return;
+                }
             }
 
+            // Continue polling if still in progress
             setTimeout(poll, 2000);
-        } catch (error) {
+        }
+        catch (error) {
             console.error('Error checking status:', error);
-            showStatusBar('Error al verificar el estado');
+            showStatusBar(`Error: ${error.message}`);
             document.getElementById('statusBar').style.background = 'linear-gradient(135deg, #ff6b6b, #ee5a52)';
+            
+            // Retry on error, but with exponential backoff
+            const retryDelay = Math.min(5000, 1000 * Math.pow(1.5, pollAttempts - 1));
+            setTimeout(poll, retryDelay);
         }
     };
 
@@ -159,8 +243,15 @@ async function pollTranscriptionStatus(jobName) {
 }
 
 function displayResults(results) {
+    console.log("Displaying results:", results);
+    
     const transcriptionText = document.getElementById('transcriptionText');
     const summaryText = document.getElementById('summaryText');
+
+    if (!transcriptionText || !summaryText) {
+        console.error("Results containers not found");
+        return;
+    }
 
     // Remover clases de loading
     transcriptionText.classList.remove('loading-pulse');
@@ -169,12 +260,18 @@ function displayResults(results) {
     // Display transcription
     if (results.transcription) {
         transcriptionText.innerHTML = formatTranscriptionText(results.transcription);
+    } else {
+        transcriptionText.innerHTML = '<p class="text-muted">No se encontró transcripción</p>';
     }
 
-    // Display summary
+    // Display summary  
     if (results.summary) {
         summaryText.innerHTML = formatSummaryText(results.summary);
+    } else {
+        summaryText.innerHTML = '<p class="text-muted">No se encontró resumen</p>';
     }
+
+    processingInProgress = false;
 }
 
 function formatTranscriptionText(transcription) {
@@ -200,6 +297,12 @@ function formatSummaryText(summary) {
 $formulario.addEventListener('submit', async (e) => {
     e.preventDefault();
 
+    // Prevenir múltiples submissions
+    if (processingInProgress) {
+        console.log("Processing already in progress, ignoring submit");
+        return;
+    }
+
     const fileInput = document.getElementById('audioFile');
     const idiomaInput = document.getElementById('idioma');
     const speakersInput = document.getElementById('speakers');
@@ -214,6 +317,8 @@ $formulario.addEventListener('submit', async (e) => {
     const idioma = idiomaInput.value;
     const speakers = parseInt(speakersInput.value);
 
+    processingInProgress = true;
+
     try {
         showStatusBar('Subiendo archivo...');
         await uploadFileToS3(file, key);
@@ -223,12 +328,17 @@ $formulario.addEventListener('submit', async (e) => {
         const jobName = await iniciarTranscripcion(nombreDelBucket, key, idioma, speakers);
         console.log("Transcripción iniciada:", jobName);
 
-        pollTranscriptionStatus(jobName.job_name || jobName);
+        // Extraer el job name correcto
+        const actualJobName = jobName.job_name || jobName.JobName || jobName;
+        console.log("Using job name:", actualJobName);
+
+        pollTranscriptionStatus(actualJobName);
 
     } catch (error) {
         console.error("Error:", error);
-        showStatusBar('Error durante el proceso');
+        showStatusBar(`Error: ${error.message}`);
         document.getElementById('statusBar').style.background = 'linear-gradient(135deg, #ff6b6b, #ee5a52)';
+        processingInProgress = false;
     }
 });
 
