@@ -16,17 +16,20 @@ class FrontendInfraStack(Stack):
         # Resolver repo root desde este archivo: /repo/infra/infra/infra_stack.py -> parents[2] = /repo
         repo_root = Path(__file__).resolve().parents[2]
         site_path = (repo_root / "frontend" / "dist").resolve()
+        
+        bucket_name="transcripcion-con-resumen-frontend"
 
         # Guardas claras
         if not site_path.exists() or not (site_path / "index.html").exists():
             raise FileNotFoundError(
                 f"No se encontró un build válido en: {site_path}\n"
                 "Ejecutá 'npm run build' desde la raíz (o 'npm run deploy' que ya lo hace)."
-            )
+            )        
 
         # Bucket privado (sirve vía CloudFront)
         website_bucket = s3.Bucket(
             self, "WebsiteBucket",
+            bucket_name=bucket_name,
             block_public_access=s3.BlockPublicAccess.BLOCK_ALL,
             enforce_ssl=True,
             removal_policy=RemovalPolicy.DESTROY,
