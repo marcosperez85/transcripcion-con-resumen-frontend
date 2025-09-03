@@ -53,6 +53,20 @@ body {
     padding: 2rem 0;
 }
 
+/* Pills de estado en la status-bar */
+.status-pills { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.status-pill {
+  border: 1px solid rgba(0,0,0,0.08);
+  border-radius: 999px;
+  padding: 6px 10px;
+  font-size: 0.9rem;
+  background: #fff;
+  display: inline-flex; gap: 6px; align-items: center;
+}
+.status-pill .fa-spinner { opacity: 0.8; }
+.status-pill.done { background: #e9fff9; border-color: #baf3e6; }
+.status-pill.error { background: #ffe9e9; border-color: #ffc7c7; }
+
 .header-icon {
     font-size: 4rem;
     background: var(--primary-gradient);
