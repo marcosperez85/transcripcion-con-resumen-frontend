@@ -66,59 +66,6 @@ function updateFileLabel(file) {
     }
 }
 
-function renderStatusPills(transcriptionStatus, formattedReady, summaryReady) {
-    // Estados derivados
-    const tDone = transcriptionStatus === 'COMPLETED';
-    const tFail = transcriptionStatus === 'FAILED';
-    const fDone = !!formattedReady;
-    const sDone = !!summaryReady;
-
-    const icon = (done, fail = false) => {
-        if (fail) return '<i class="fas fa-circle-xmark"></i>';
-        return done ? '<i class="fas fa-circle-check"></i>' : '<i class="fas fa-spinner fa-spin"></i>';
-    };
-
-    const pill = (label, done, fail = false) => `
-        <div class="status-pill ${done ? 'done' : ''} ${fail ? 'error' : ''}">
-            ${icon(done, fail)} <span>${label}${fail ? ': error' : done ? ': listo' : ': procesando'}</span>
-        </div>
-    `;
-
-    return `
-      <div class="status-pills">
-        ${pill('Transcripción', tDone, tFail)}
-        ${pill('Formateo', fDone)}
-        ${pill('Resumen', sDone)}
-      </div>
-    `;
-}
-
-function showStatusBar(messageOrHtml) {
-    const statusBar = document.getElementById('statusBar');
-    const statusText = document.getElementById('statusText');
-    if (!statusBar || !statusText) return;
-
-    if (typeof messageOrHtml === 'string') {
-        statusText.innerHTML = messageOrHtml; // permite cadenas simples
-    } else {
-        statusText.innerHTML = ''; // fallback
-    }
-
-    statusBar.classList.add('show');
-    statusBar.style.display = 'block';
-    statusBar.style.background = ''; // reset
-}
-
-function hideStatusBar() {
-    const statusBar = document.getElementById('statusBar');
-    if (statusBar) {
-        statusBar.classList.remove('show');
-        setTimeout(() => {
-            statusBar.style.display = 'none';
-        }, 300);
-    }
-}
-
 function createResultsContainer() {
     let resultsContainer = document.getElementById('resultsContainer');
 
@@ -174,27 +121,21 @@ function createResultsContainer() {
 }
 
 async function pollTranscriptionStatus(jobName) {
-    showStatusBar('Iniciando transcripción...');
     createResultsContainer();
 
     let pollAttempts = 0;
-    const maxPollAttempts = 150; // 5 minutos máximo (150 * 2 segundos)
+    const maxPollAttempts = 150; // ~5 min (150 * 2s)
 
     const poll = async () => {
-        const transcriptionStatus = status.status || status.TranscriptionJobStatus;
-        const formattedReady = status.formattedReady || false;
-        const summaryReady = status.summaryReady || false;
-
-        document.getElementById('statusText').innerHTML =
-            renderStatusPills(transcriptionStatus || 'IN_PROGRESS', formattedReady, summaryReady);
-
         try {
             pollAttempts++;
             console.log(`Poll attempt ${pollAttempts} for job: ${jobName}`);
 
             if (pollAttempts > maxPollAttempts) {
-                showStatusBar('Tiempo de espera agotado');
-                document.getElementById('statusBar').style.background = 'linear-gradient(135deg, #ff6b6b, #ee5a52)';
+                const tNode = document.getElementById('transcriptionText');
+                const sNode = document.getElementById('summaryText');
+                if (tNode) tNode.innerHTML = '<p class="text-danger">Tiempo de espera agotado.</p>';
+                if (sNode) sNode.innerHTML = '<p class="text-muted">No se generó resumen.</p>';
                 processingInProgress = false;
                 return;
             }
@@ -202,79 +143,69 @@ async function pollTranscriptionStatus(jobName) {
             const status = await checkTranscriptionStatus(jobName);
             console.log("Status payload:", status);
 
-            if (!status) {
-                console.log("No status received, retrying...");
-                showStatusBar('Esperando respuesta del servidor...');
-                setTimeout(poll, 3000); // Wait a bit longer if no response
-                return;
-            }
-
-            // Verificar si status tiene la estructura esperada
-            if (typeof status !== 'object') {
-                console.log("Invalid status format:", status);
-                showStatusBar('Esperando estado válido...');
+            if (!status || typeof status !== 'object') {
+                // Esperar un poco y reintentar
                 setTimeout(poll, 2000);
                 return;
             }
 
-            // El status puede venir directamente o dentro de una propiedad
             const transcriptionStatus = status.status || status.TranscriptionJobStatus;
-            const formattedReady = status.formattedReady || false;
-            const summaryReady = status.summaryReady || false;
+            const formattedReady = !!status.formattedReady;
+            const summaryReady = !!status.summaryReady;
 
-            console.log("Parsed status:", { transcriptionStatus, formattedReady, summaryReady });
+            const tNode = document.getElementById('transcriptionText');
+            const sNode = document.getElementById('summaryText');
 
-            // Actualizar barra de estado
-            const statusMessage = `Transcripción: ${transcriptionStatus || 'iniciando'} | Formateo: ${formattedReady ? 'listo' : 'procesando'} | Resumen: ${summaryReady ? 'listo' : 'procesando'}`;
-            showStatusBar(statusMessage);
+            // Feedback suave mientras procesa
+            if (tNode && transcriptionStatus !== 'COMPLETED') {
+                tNode.classList.add('loading-pulse');
+                tNode.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Procesando transcripción...';
+            }
+            if (sNode && !summaryReady) {
+                sNode.classList.add('loading-pulse');
+                sNode.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Generando resumen...';
+            }
 
             if (transcriptionStatus === 'FAILED') {
-                showStatusBar(renderStatusPills('FAILED', formattedReady, summaryReady));
-                document.getElementById('statusBar').style.background = 'linear-gradient(135deg, #ff6b6b, #ee5a52)';
+                if (tNode) {
+                    tNode.classList.remove('loading-pulse');
+                    tNode.innerHTML = '<p class="text-danger">La transcripción falló.</p>';
+                }
                 processingInProgress = false;
                 return;
             }
 
-            // Verificar si todo está completo
+            // Cuando todo está completo, obtenemos resultados
             if (transcriptionStatus === 'COMPLETED' && formattedReady && summaryReady) {
-                console.log("All processes completed, fetching results...");
-                showStatusBar('Obteniendo resultados...');
-
                 try {
                     const results = await getTranscriptionResults(nombreDelBucket, jobName);
                     console.log("Results received:", results);
 
                     if (results && (results.transcription || results.summary)) {
-                        hideStatusBar();
                         displayResults(results);
-
-                        // Llevar foco visual a resultados con un scroll suave
                         const rc = document.getElementById('resultsContainer');
                         if (rc) rc.scrollIntoView({ behavior: 'smooth', block: 'start' });
                         processingInProgress = false;
                         return;
                     } else {
-                        console.log("No results in response, retrying...");
                         setTimeout(poll, 2000);
                         return;
                     }
                 } catch (error) {
                     console.error('Error fetching results:', error);
-                    showStatusBar('Error obteniendo resultados, reintentando...');
+                    if (tNode) tNode.innerHTML = '<p class="text-danger">Error obteniendo resultados, reintentando...</p>';
                     setTimeout(poll, 3000);
                     return;
                 }
             }
 
-            // Continue polling if still in progress
+            // Continuar polling
             setTimeout(poll, 2000);
-        }
-        catch (error) {
+        } catch (error) {
             console.error('Error checking status:', error);
-            showStatusBar(`Error: ${error.message}`);
-            document.getElementById('statusBar').style.background = 'linear-gradient(135deg, #ff6b6b, #ee5a52)';
-
-            // Retry on error, but with exponential backoff
+            const tNode = document.getElementById('transcriptionText');
+            if (tNode) tNode.innerHTML = `<p class="text-danger">Error: ${error.message}</p>`;
+            // Backoff
             const retryDelay = Math.min(5000, 1000 * Math.pow(1.5, pollAttempts - 1));
             setTimeout(poll, retryDelay);
         }
@@ -284,9 +215,6 @@ async function pollTranscriptionStatus(jobName) {
 }
 
 function displayResults(results) {
-    // Ocultar barra de resultados luego de 2 o 3 segundos
-    setTimeout(() => hideStatusBar(), 2500);
-
     console.log("Displaying results:", results);
 
     const transcriptionText = document.getElementById('transcriptionText');
@@ -297,18 +225,15 @@ function displayResults(results) {
         return;
     }
 
-    // Remover clases de loading
     transcriptionText.classList.remove('loading-pulse');
     summaryText.classList.remove('loading-pulse');
 
-    // Display transcription
     if (results.transcription) {
         transcriptionText.innerHTML = formatTranscriptionText(results.transcription);
     } else {
         transcriptionText.innerHTML = '<p class="text-muted">No se encontró transcripción</p>';
     }
 
-    // Display summary  
     if (results.summary) {
         summaryText.innerHTML = formatSummaryText(results.summary);
     } else {
@@ -340,12 +265,7 @@ function formatSummaryText(summary) {
 // Form submission
 $formulario.addEventListener('submit', async (e) => {
     e.preventDefault();
-
-    // Prevenir múltiples submissions
-    if (processingInProgress) {
-        console.log("Processing already in progress, ignoring submit");
-        return;
-    }
+    if (processingInProgress) return;
 
     const fileInput = document.getElementById('audioFile');
     const idiomaInput = document.getElementById('idioma');
@@ -364,24 +284,31 @@ $formulario.addEventListener('submit', async (e) => {
     processingInProgress = true;
 
     try {
-        showStatusBar('Subiendo archivo...');
+        // Mostrar contenedor y estados iniciales
+        const rc = createResultsContainer();
+        const tNode = document.getElementById('transcriptionText');
+        const sNode = document.getElementById('summaryText');
+        if (tNode) {
+            tNode.classList.add('loading-pulse');
+            tNode.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Subiendo archivo...';
+        }
+        if (sNode) {
+            sNode.classList.add('loading-pulse');
+            sNode.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Esperando transcripción...';
+        }
+
         await uploadFileToS3(file, key);
-        console.log("Archivo subido correctamente");
+        if (tNode) tNode.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Iniciando transcripción...';
 
-        showStatusBar('Iniciando transcripción...');
         const jobName = await iniciarTranscripcion(nombreDelBucket, key, idioma, speakers);
-        console.log("Transcripción iniciada:", jobName);
-
-        // Extraer el job name correcto
         const actualJobName = jobName.job_name || jobName.JobName || jobName;
         console.log("Using job name:", actualJobName);
 
         pollTranscriptionStatus(actualJobName);
-
     } catch (error) {
         console.error("Error:", error);
-        showStatusBar(`Error: ${error.message}`);
-        document.getElementById('statusBar').style.background = 'linear-gradient(135deg, #ff6b6b, #ee5a52)';
+        const tNode = document.getElementById('transcriptionText');
+        if (tNode) tNode.innerHTML = `<p class="text-danger">Error: ${error.message}</p>`;
         processingInProgress = false;
     }
 });

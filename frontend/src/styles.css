@@ -22,50 +22,13 @@ body {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     min-height: 100vh;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    padding-top: 80px;
-}
-
-/* Status Bar */
-.status-bar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(10px);
-    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-    padding: 15px 0;
-    z-index: 1000;
-    transform: translateY(-100%);
-    transition: var(--transition);
-}
-
-.status-bar.show {
-    transform: translateY(0);
-}
-
-.status-bar .spinner-border {
-    color: var(--primary-color);
+    padding-top: 0px;
 }
 
 /* Header */
 .header-section {
     padding: 2rem 0;
 }
-
-/* Pills de estado en la status-bar */
-.status-pills { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
-.status-pill {
-  border: 1px solid rgba(0,0,0,0.08);
-  border-radius: 999px;
-  padding: 6px 10px;
-  font-size: 0.9rem;
-  background: #fff;
-  display: inline-flex; gap: 6px; align-items: center;
-}
-.status-pill .fa-spinner { opacity: 0.8; }
-.status-pill.done { background: #e9fff9; border-color: #baf3e6; }
-.status-pill.error { background: #ffe9e9; border-color: #ffc7c7; }
 
 .header-icon {
     font-size: 4rem;
@@ -266,7 +229,7 @@ body {
 /* Responsive */
 @media (max-width: 768px) {
     body {
-        padding-top: 60px;
+        padding-top: 0px;
     }
     
     .header-title {
