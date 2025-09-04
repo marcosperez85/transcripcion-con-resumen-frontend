@@ -88,7 +88,7 @@ function createResultsContainer() {
     // Si no existe, lo creamos una sola vez
     resultsContainer = document.createElement('div');
     resultsContainer.id = 'resultsContainer';
-    resultsContainer.className = 'row justify-content-center';
+    resultsContainer.className = 'row justify-content-center mt-4';
     resultsContainer.innerHTML = `
         <div class="col-lg-8">
             <div class="results-container">

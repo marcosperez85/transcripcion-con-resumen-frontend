@@ -155,6 +155,10 @@ body {
 }
 
 /* Results Container */
+#resultsContainer {
+    display: block !important;
+}
+
 .results-container {
     background: white;
     border-radius: var(--border-radius);
@@ -246,8 +250,8 @@ body {
     }
     
     .results-container {
-        margin: 1rem;
         padding: 1.5rem;
+        margin-top: 1rem;
     }
 }
 
