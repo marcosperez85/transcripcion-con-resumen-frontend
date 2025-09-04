@@ -155,10 +155,6 @@ body {
 }
 
 /* Results Container */
-#resultsContainer {
-    display: block !important;
-}
-
 .results-container {
     background: white;
     border-radius: var(--border-radius);
