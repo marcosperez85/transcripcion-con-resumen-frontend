@@ -81,7 +81,6 @@ function createResultsContainer() {
             summaryText.classList.add('loading-pulse');
             summaryText.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Generando resumen...';
         }
-        resultsContainer.style.display = 'block';
         return resultsContainer;
     }
 
