@@ -3,10 +3,10 @@ import { Upload } from "@aws-sdk/lib-storage";
 import { getCognitoCredentials } from './cognitoAuth.js';
 
 const REGION = "us-east-1";
-const BUCKET_NAME = "transcripcion-con-resumen";
+const BUCKET_NAME = "transcripcion-con-resumen-backend";
 
 // Importante configurar el CORS en la pestaña de Permissions dentro del bucket para que admita el origen desde el cual 
-// se realiza el upload
+// se realiza el upload. De todas formas ese permiso ya fue agregado en el stack.
 
 export async function uploadFileToS3(file, key) {
     const s3 = new S3Client({
