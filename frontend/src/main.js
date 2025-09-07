@@ -7,7 +7,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
 const $formulario = document.getElementById('uploadForm');
-const nombreDelBucket = "transcripcion-con-resumen-backend";
+const nombreDelBucket = "transcripcion-con-resumen-backend-376129873205-us-east-1";
 
 // Variable para evitar múltiples procesos simultáneos
 let processingInProgress = false;
