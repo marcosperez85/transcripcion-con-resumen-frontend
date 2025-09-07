@@ -17,7 +17,7 @@ class FrontendInfraStack(Stack):
         repo_root = Path(__file__).resolve().parents[2]
         site_path = (repo_root / "frontend" / "dist").resolve()
         
-        bucket_name="transcripcion-con-resumen-frontend"
+        bucket_name=f"transcripcion-con-resumen-frontend-{self.account}-{self.region}"
 
         # Guardas claras
         if not site_path.exists() or not (site_path / "index.html").exists():
