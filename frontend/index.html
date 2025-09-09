@@ -29,7 +29,7 @@
                         Transcribe automáticamente archivos de audio, identifica hablantes y genera resúmenes
                         inteligentes
                     </p>
-                    <a href="./pages/app.html" class="btn btn-light btn-lg px-4 py-2">
+                    <a id="comenzarBtn1" class="btn btn-light btn-lg px-4 py-2">
                         <i class="fas fa-play me-2"></i>Comenzar Ahora
                     </a>
                 </div>
@@ -44,8 +44,7 @@
                         <div class="upload-card text-center h-100">
                             <i class="fas fa-upload text-primary mb-3" style="font-size: 3rem;"></i>
                             <h4>Subida Fácil</h4>
-                            <p class="text-muted">Sube archivos de audio de forma segura a AWS S3 con un simple
-                                arrastrar y soltar</p>
+                            <p class="text-muted">Sube archivos de audio de forma segura a la app en la nube</p>
                         </div>
                     </div>
                     <div class="col-md-4">
@@ -81,7 +80,7 @@
                         <div class="col-md-3 text-center">
                             <div class="step-number">2</div>
                             <h5>Procesamiento IA</h5>
-                            <p class="text-muted">AWS Transcribe procesa tu audio con inteligencia artificial</p>
+                            <p class="text-muted">La app procesa tu audio con inteligencia artificial</p>
                         </div>
                         <div class="col-md-3 text-center">
                             <div class="step-number">3</div>
@@ -104,7 +103,7 @@
                 <div class="upload-card bg-primary text-white">
                     <h3 class="mb-3">¿Listo para empezar?</h3>
                     <p class="mb-4">Únete a miles de usuarios que ya están transcribiendo sus audios con IA</p>
-                    <a href="./pages/app.html" class="btn btn-light btn-lg">
+                    <a id="comenzarBtn2" class="btn btn-light btn-lg">
                         <i class="fas fa-rocket me-2"></i>Comenzar Transcripción
                     </a>
                 </div>
@@ -117,19 +116,12 @@
         <div class="container">
             <p class="text-white-50 mb-0">
                 <i class="fas fa-heart text-danger"></i>
-                Transcriptor de Audio - Potenciado por AWS
+                Transcriptor de Audio - Marcos Pérez - Todos los derechos reservados
             </p>
         </div>
     </footer>
 
     <script type="module" src="./src/landing.js"></script>
-    <script>
-        // Login button functionality
-        document.getElementById('loginBtn').addEventListener('click', function () {
-            // Redirect to app page or trigger login
-            window.location.href = './pages/app.html';
-        });
-    </script>
 </body>
 
 </html>
