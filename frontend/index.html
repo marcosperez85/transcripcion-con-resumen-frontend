@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transcriptor de Audios - Convierte audio a texto con IA</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="./src/styles.css">
+</head>
+
+<body>
+    <!-- Auth button -->
+    <div class="auth-buttons">
+        <button type="button" class="btn btn-outline-light" id="loginBtn">
+            <i class="fas fa-sign-in-alt me-1"></i>Iniciar Sesión
+        </button>
+    </div>
+
+    <div class="container">
+        <!-- Header Hero Section -->
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="header-section text-center mb-5">
+                    <i class="fas fa-microphone-alt header-icon"></i>
+                    <h1 class="header-title">Transcriptor de Audio</h1>
+                    <p class="header-subtitle">Convierte tus archivos de audio en texto con IA</p>
+                    <p class="lead text-white-50 mb-4">
+                        Transcribe automáticamente archivos de audio, identifica hablantes y genera resúmenes
+                        inteligentes
+                    </p>
+                    <a href="./pages/app.html" class="btn btn-light btn-lg px-4 py-2">
+                        <i class="fas fa-play me-2"></i>Comenzar Ahora
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Features Section -->
+        <div class="row justify-content-center mb-5">
+            <div class="col-lg-10">
+                <div class="row g-4">
+                    <div class="col-md-4">
+                        <div class="upload-card text-center h-100">
+                            <i class="fas fa-upload text-primary mb-3" style="font-size: 3rem;"></i>
+                            <h4>Subida Fácil</h4>
+                            <p class="text-muted">Sube archivos de audio de forma segura a AWS S3 con un simple
+                                arrastrar y soltar</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="upload-card text-center h-100">
+                            <i class="fas fa-users text-primary mb-3" style="font-size: 3rem;"></i>
+                            <h4>Identificación de Hablantes</h4>
+                            <p class="text-muted">Identifica automáticamente diferentes hablantes en tus grabaciones</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="upload-card text-center h-100">
+                            <i class="fas fa-language text-primary mb-3" style="font-size: 3rem;"></i>
+                            <h4>Multiidioma</h4>
+                            <p class="text-muted">Soporte para español, inglés y múltiples idiomas con alta precisión
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- How it Works Section -->
+        <div class="row justify-content-center mb-5">
+            <div class="col-lg-10">
+                <div class="upload-card">
+                    <h2 class="text-center mb-4 text-primary">¿Cómo funciona?</h2>
+                    <div class="row g-4">
+                        <div class="col-md-3 text-center">
+                            <div class="step-number">1</div>
+                            <h5>Sube tu archivo</h5>
+                            <p class="text-muted">Arrastra y suelta tu archivo de audio o selecciónalo</p>
+                        </div>
+                        <div class="col-md-3 text-center">
+                            <div class="step-number">2</div>
+                            <h5>Procesamiento IA</h5>
+                            <p class="text-muted">AWS Transcribe procesa tu audio con inteligencia artificial</p>
+                        </div>
+                        <div class="col-md-3 text-center">
+                            <div class="step-number">3</div>
+                            <h5>Identificación</h5>
+                            <p class="text-muted">Identifica automáticamente diferentes hablantes</p>
+                        </div>
+                        <div class="col-md-3 text-center">
+                            <div class="step-number">4</div>
+                            <h5>Resultado</h5>
+                            <p class="text-muted">Obtén la transcripción formateada y resumen</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CTA Section -->
+        <div class="row justify-content-center">
+            <div class="col-lg-8 text-center">
+                <div class="upload-card bg-primary text-white">
+                    <h3 class="mb-3">¿Listo para empezar?</h3>
+                    <p class="mb-4">Únete a miles de usuarios que ya están transcribiendo sus audios con IA</p>
+                    <a href="./pages/app.html" class="btn btn-light btn-lg">
+                        <i class="fas fa-rocket me-2"></i>Comenzar Transcripción
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="text-center py-4 mt-5">
+        <div class="container">
+            <p class="text-white-50 mb-0">
+                <i class="fas fa-heart text-danger"></i>
+                Transcriptor de Audio - Potenciado por AWS
+            </p>
+        </div>
+    </footer>
+
+    <script type="module" src="./src/landing.js"></script>
+    <script>
+        // Login button functionality
+        document.getElementById('loginBtn').addEventListener('click', function () {
+            // Redirect to app page or trigger login
+            window.location.href = './pages/app.html';
+        });
+    </script>
+</body>
+
+</html>
