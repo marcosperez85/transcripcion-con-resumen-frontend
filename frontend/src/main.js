@@ -1,10 +1,10 @@
-import { uploadFileToS3 } from './s3Upload.js';
-import { iniciarTranscripcion } from './transcribe.js';
-import { checkTranscriptionStatus, getTranscriptionResults } from './statusChecker.js';
-
 // Importaciones de Bootstrap (mantén estas)
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+
+import { uploadFileToS3 } from './s3Upload.js';
+import { iniciarTranscripcion } from './transcribe.js';
+import { checkTranscriptionStatus, getTranscriptionResults } from './statusChecker.js';
 
 const $formulario = document.getElementById('uploadForm');
 const nombreDelBucket = "transcripcion-con-resumen-backend-376129873205-us-east-1";
