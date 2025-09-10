@@ -7,8 +7,3 @@ document.getElementById("loginBtn").addEventListener("click", async () => {
     console.log("Login Presionado")
     await userManager.signinRedirect();
 });
-
-document.getElementById("logoutBtn").addEventListener("click", async () => {
-    console.log("Logout Presionado")
-    await signOutRedirect();
-});
