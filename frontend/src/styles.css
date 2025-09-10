@@ -269,7 +269,7 @@ body {
 }
 
 
-/* Landing page specific styles */
+/* ***** Landing page specific styles ***** */
 .auth-buttons {
     position: absolute;
     top: 20px;
@@ -305,7 +305,7 @@ footer {
 }
 
 
-* Callback page specific styles */
+/* ***** Callback page specific styles ***** */
 .min-vh-100 {
     min-height: 100vh;
 }
@@ -378,4 +378,33 @@ footer {
 #successContent,
 #errorContent {
     transition: var(--transition);
+}
+
+/* ***** Logout page specific styles ***** */
+.text-warning {
+    color: var(--warning-color) !important;
+}
+
+/* Enhanced security info card */
+.upload-card .fa-shield-alt {
+    color: var(--success-color);
+}
+
+/* Small text for additional info */
+.small {
+    font-size: 0.875rem;
+}
+
+/* Logout icon animation */
+.fa-sign-out-alt.loading-pulse {
+    animation: pulse 2s infinite, slideOut 3s ease-in-out infinite;
+}
+
+@keyframes slideOut {
+    0%, 100% {
+        transform: translateX(0);
+    }
+    50% {
+        transform: translateX(10px);
+    }
 }
