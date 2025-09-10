@@ -1,13 +1,14 @@
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+
 import { uploadFileToS3 } from './s3Upload.js';
 import { iniciarTranscripcion } from './transcribe.js';
 import { checkTranscriptionStatus, getTranscriptionResults } from './statusChecker.js';
 
-// Importaciones de Bootstrap (mantén estas)
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap/dist/js/bootstrap.bundle.min.js';
-
 const $formulario = document.getElementById('uploadForm');
 const nombreDelBucket = "transcripcion-con-resumen-backend-376129873205-us-east-1";
+
+// ********* Inicializar el resto de los procesos de la app *********
 
 // Variable para evitar múltiples procesos simultáneos
 let processingInProgress = false;

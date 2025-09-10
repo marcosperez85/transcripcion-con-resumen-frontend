@@ -1,6 +1,6 @@
 import { S3Client } from "@aws-sdk/client-s3";
 import { Upload } from "@aws-sdk/lib-storage";
-import { getCognitoCredentials } from './cognitoAuth.js';
+import { getCognitoCredentials } from './s3Credentials.js';
 
 const REGION = "us-east-1";
 const BUCKET_NAME = "transcripcion-con-resumen-backend-376129873205-us-east-1";
