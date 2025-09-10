@@ -1,11 +1,67 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
-  <head>
-    <meta charset="utf-8"/>
-    <title>Procesando inicio de sesión…</title>
-  </head>
-  <body>
-    <p>Procesando inicio de sesión…</p>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Procesando inicio de sesión - Transcriptor de Audios</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../src/styles.css">
+</head>
+
+<body>
+    <div class="container">
+        <div class="row justify-content-center align-items-center min-vh-100">
+            <div class="col-lg-6 col-md-8">
+                <div class="upload-card text-center">
+                    <!-- Loading Icon -->
+                    <div class="loading-icon mb-4">
+                        <i class="fas fa-microphone-alt header-icon loading-pulse"></i>
+                    </div>
+                    
+                    <!-- Loading Content -->
+                    <div id="loadingContent">
+                        <h2 class="text-primary mb-3">Procesando inicio de sesión</h2>
+                        <p class="text-muted mb-4">
+                            <i class="fas fa-spinner fa-spin me-2"></i>
+                            Verificando tus credenciales...
+                        </p>
+                        <div class="progress-bar-container">
+                            <div class="progress-bar-animated"></div>
+                        </div>
+                    </div>
+
+                    <!-- Success Content (initially hidden) -->
+                    <div id="successContent" class="d-none">
+                        <h2 class="text-success mb-3">
+                            <i class="fas fa-check-circle me-2"></i>
+                            ¡Inicio de sesión exitoso!
+                        </h2>
+                        <p class="text-muted mb-4">
+                            Redirigiendo a la aplicación...
+                        </p>
+                    </div>
+
+                    <!-- Error Content (initially hidden) -->
+                    <div id="errorContent" class="d-none">
+                        <h2 class="text-danger mb-3">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            Error en el inicio de sesión
+                        </h2>
+                        <p class="text-muted mb-4">
+                            No se pudo completar el inicio de sesión. Por favor, inténtalo de nuevo.
+                        </p>
+                        <a href="/" class="btn btn-primary">
+                            <i class="fas fa-home me-2"></i>
+                            Volver al inicio
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script type="module" src="../src/callback.js"></script>
-  </body>
+</body>
+
 </html>
