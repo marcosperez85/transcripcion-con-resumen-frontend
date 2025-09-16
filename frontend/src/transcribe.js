@@ -11,7 +11,8 @@ export async function iniciarTranscripcion(bucketName, fileKey, languageCode, ma
             maxSpeakers: maxSpeakers
         }
     };
-
+    
+    console.log("Body enviado:", body)
     const response = await fetch(apiUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
