@@ -1,32 +1,59 @@
 import { S3Client } from "@aws-sdk/client-s3";
 import { Upload } from "@aws-sdk/lib-storage";
-import { getCognitoCredentials } from './s3Credentials.js';
+import { getCognitoCredentials, getIdentityId } from "./s3Credentials.js";
 
 const REGION = "us-east-1";
 const BUCKET_NAME = "transcripcion-con-resumen-backend-376129873205-us-east-1";
 
-// Importante configurar el CORS en la pestaña de Permissions dentro del bucket para que admita el origen desde el cual 
-// se realiza el upload. De todas formas ese permiso ya fue agregado en el stack.
+/**
+ * Sube un archivo a S3 usando Cognito Identity (rol "authenticated")
+ * @param {File|Blob|Uint8Array|ArrayBuffer} file
+ * @param {string} fileName nombre base del archivo (sin prefijo)
+ */
+export async function uploadFileToS3(file, fileName) {
+    // 1) Resolver el provider ANTES de crear el cliente. 
+    // const credentials = await getCognitoCredentials();
 
-export async function uploadFileToS3(file, key) {
+    // Esto devuelve un provider (función)
+    const provider = await getCognitoCredentials();
+    
+
+    // Fuerzo la resolución para inspeccionar 
+    const creds = await provider();
+
+    console.log("Resolved creds shape:", {
+        accessKeyId: !!creds.accessKeyId,
+        secret: !!creds.secretAccessKey,
+        token: !!creds.sessionToken,
+        expiration: creds.expiration,
+    });
+
     const s3 = new S3Client({
         region: REGION,
-        credentials: getCognitoCredentials()
+        credentials: provider, // provider válido
     });
+
+    // 2) Prefijo por usuario, acorde a la policy del rol
+    const identityId = await getIdentityId(); // ej: us-east-1:xxxx-...
+    const Key = `audios/${identityId}/${fileName}`;
 
     const parallelUploads3 = new Upload({
         client: s3,
         params: {
             Bucket: BUCKET_NAME,
-            Key: key,
-            Body: file,
-            ContentType: file.type
+            Key,
+            Body: file, // en navegador, File/Blob va perfecto
+            ContentType: (file && file.type) || "application/octet-stream",
         },
+        // Opcional: tunear multipart en uploads grandes
+        // queueSize: 3,
+        // partSize: 5 * 1024 * 1024,
     });
 
-    parallelUploads3.on("httpUploadProgress", (progress) => {
-        console.log(progress);
+    parallelUploads3.on("httpUploadProgress", (p) => {
+        console.log("Progreso:", p);
     });
 
     await parallelUploads3.done();
+    return { Bucket: BUCKET_NAME, Key };
 }
