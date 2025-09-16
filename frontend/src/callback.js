@@ -22,9 +22,17 @@ function showError() {
 
 // Procesa ?code y guarda la sesión
 userManager.signinCallback()
-    .then(() => {
-        console.log('Inicio de sesión exitoso');
-        showSuccess();
+    .then(async () => {
+        const user = await userManager.getUser(); // OIDC
+        const idToken = user?.id_token;
+        
+        if (idToken) {
+            console.log('Inicio de sesión exitoso');
+            showSuccess();
+
+            // Usá tu dominio CF (hoy lo tenés hardcodeado en auth.js) :contentReference[oaicite:4]{index=4}
+            document.cookie = `id_token=${idToken}; Path=/; Secure; SameSite=Lax; Max-Age=3600`;
+        }
         
         // Pequeña pausa para mostrar el mensaje de éxito
         setTimeout(() => {
