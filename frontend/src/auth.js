@@ -4,7 +4,7 @@ import { UserManager } from "oidc-client-ts";
 const isDevelopment = window.location.hostname === 'localhost';
 const baseUrl = isDevelopment
     ? 'http://localhost:3000'
-    : 'https://d1cssc0skay50s.cloudfront.net';
+    : 'https://d11ahn26gyfe9q.cloudfront.net';
 
 const cognitoAuthConfig = {
     authority: "https://cognito-idp.us-east-1.amazonaws.com/us-east-1_PApw7t541",
