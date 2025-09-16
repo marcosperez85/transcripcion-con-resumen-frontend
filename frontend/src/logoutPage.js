@@ -1,7 +1,7 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
-import { signOutRedirect } from './auth.js';
+import { userManager, signOutRedirect } from './auth.js';
 
 const loadingContent = document.getElementById('loadingContent');
 const successContent = document.getElementById('successContent');
@@ -40,6 +40,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Primera vez: marcamos el flag y salimos a Cognito
   sessionStorage.setItem('postLogoutInProgress', '1');
   try {
+    // Limpia el id_token en localStorage
+    await userManager.removeUser();   
     await signOutRedirect();
   } catch (e) {
     console.error('Error durante el logout:', e);
