@@ -4,6 +4,8 @@ import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import { uploadFileToS3 } from './s3Upload.js';
 import { iniciarTranscripcion } from './transcribe.js';
 import { checkTranscriptionStatus, getTranscriptionResults } from './statusChecker.js';
+import { userManager } from "./auth.js";
+import { getIdentityId } from './s3Credentials.js';
 
 const $formulario = document.getElementById('uploadForm');
 const nombreDelBucket = "transcripcion-con-resumen-backend-376129873205-us-east-1";
@@ -277,7 +279,6 @@ $formulario.addEventListener('submit', async (e) => {
     }
 
     const file = fileInput.files[0];
-    const key = `audios/${file.name}`;
     const idioma = idiomaInput.value;
     const speakers = parseInt(speakersInput.value);
 
@@ -297,10 +298,13 @@ $formulario.addEventListener('submit', async (e) => {
             sNode.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Esperando transcripción...';
         }
 
-        await uploadFileToS3(file, key);
+        const { Bucket, Key } = await uploadFileToS3(file, file.name);
+
         if (tNode) tNode.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Iniciando transcripción...';
 
-        const jobName = await iniciarTranscripcion(nombreDelBucket, key, idioma, speakers);
+        // const jobName = await iniciarTranscripcion(nombreDelBucket, key, idioma, speakers);
+        const jobName = await iniciarTranscripcion(Bucket, Key, idioma, speakers);
+
         const actualJobName = jobName.job_name || jobName.JobName || jobName;
         console.log("Using job name:", actualJobName);
 
