@@ -1,13 +1,6 @@
 // index.mjs
 import { CognitoJwtVerifier } from "aws-jwt-verify";
-
-/** ========== CONFIG: EDITAR ESTO ========== */
-const REGION = "us-east-1";
-const USER_POOL_ID = "us-east-1_PApw7t541";          // tu User Pool
-const CLIENT_ID    = "6evgd9kupcn26vc5nmtuajqrkm";   // tu App client
-const COGNITO_DOMAIN = `https://us-east-1papw7t541.auth.${REGION}.amazoncognito.com`;
-
-// const REDIRECT_URI  = "https://d11ahn26gyfe9q.cloudfront.net/pages/callback.html"; // tu callback final
+import { USER_POOL_ID, CLIENT_ID, REGION, COGNITO_DOMAIN} from "../main.js";
 
 // Rutas a proteger (no incluir el callback ni el logout para poder obtener el token_id)
 const PROTECTED_URIS = new Set(["/pages/app.html"]);

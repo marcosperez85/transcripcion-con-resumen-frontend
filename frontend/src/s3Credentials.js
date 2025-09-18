@@ -1,17 +1,7 @@
 import { fromCognitoIdentityPool } from "@aws-sdk/credential-provider-cognito-identity";
 import { CognitoIdentityClient, GetIdCommand } from "@aws-sdk/client-cognito-identity";
 import { userManager } from "./auth.js";
-
- // Ajusta región según corresponda
-const REGION = "us-east-1";
-
-// Es el mismo que está en "auth.js"
-const USER_POOL_ID = "us-east-1_PApw7t541"; 
-
-// Obtenido del output del CDK del backend
-const IDENTITY_POOL_ID = "us-east-1:d48bc7ec-5785-47f0-a6a4-4ca30d43b3a2";
-
-// us-east-1:57931665-35be-c0e7-67f5-d6da3dd59c4b
+import { USER_POOL_ID, REGION, IDENTITY_POOL_ID } from "./config.js";
 
 const PROVIDER = `cognito-idp.${REGION}.amazonaws.com/${USER_POOL_ID}`;
 
@@ -43,5 +33,5 @@ export async function getIdentityId() {
     IdentityPoolId: IDENTITY_POOL_ID,
     Logins: { [PROVIDER]: idToken },
   }));
-  return out.IdentityId; // ej: "us-east-1:1234abcd-...."
+  return out.IdentityId;
 }

@@ -4,11 +4,9 @@ import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import { uploadFileToS3 } from './s3Upload.js';
 import { iniciarTranscripcion } from './transcribe.js';
 import { checkTranscriptionStatus, getTranscriptionResults } from './statusChecker.js';
-import { userManager } from "./auth.js";
-import { getIdentityId } from './s3Credentials.js';
+import { BUCKET_NAME } from './config.js';
 
 const $formulario = document.getElementById('uploadForm');
-const nombreDelBucket = "transcripcion-con-resumen-backend-376129873205-us-east-1";
 
 // ********* Inicializar el resto de los procesos de la app *********
 
@@ -180,7 +178,7 @@ async function pollTranscriptionStatus(jobName) {
             // Cuando todo está completo, obtenemos resultados
             if (transcriptionStatus === 'COMPLETED' && formattedReady && summaryReady) {
                 try {
-                    const results = await getTranscriptionResults(nombreDelBucket, jobName);
+                    const results = await getTranscriptionResults(BUCKET_NAME, jobName);
                     console.log("Results received:", results);
 
                     if (results && (results.transcription || results.summary)) {
@@ -302,7 +300,7 @@ $formulario.addEventListener('submit', async (e) => {
 
         if (tNode) tNode.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Iniciando transcripción...';
 
-        // const jobName = await iniciarTranscripcion(nombreDelBucket, key, idioma, speakers);
+        // const jobName = await iniciarTranscripcion(BUCKET_NAME, key, idioma, speakers);
         const jobName = await iniciarTranscripcion(Bucket, Key, idioma, speakers);
 
         const actualJobName = jobName.job_name || jobName.JobName || jobName;
