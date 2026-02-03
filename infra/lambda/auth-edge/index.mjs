@@ -3,9 +3,9 @@ import { CognitoJwtVerifier } from "aws-jwt-verify";
 
 /** ========== CONFIG: EDITAR ESTO ========== */
 const REGION = "us-east-1";
-const USER_POOL_ID = "us-east-1_PApw7t541";          // tu User Pool
-const CLIENT_ID    = "6evgd9kupcn26vc5nmtuajqrkm";   // tu App client
-const COGNITO_DOMAIN = `https://us-east-1papw7t541.auth.${REGION}.amazoncognito.com`;
+const USER_POOL_ID = "us-east-1_cH9mKVza7";          // tu User Pool
+const CLIENT_ID    = "7mamskis0o6je28qfvtr4tvftd";   // tu App client
+const COGNITO_DOMAIN = `https://${USER_POOL_ID}.auth.${REGION}.amazoncognito.com`;
 
 // const REDIRECT_URI  = "https://d11ahn26gyfe9q.cloudfront.net/pages/callback.html"; // tu callback final
 

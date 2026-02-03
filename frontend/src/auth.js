@@ -7,8 +7,8 @@ const baseUrl = isDevelopment
     : 'https://d11ahn26gyfe9q.cloudfront.net';
 
 const cognitoAuthConfig = {
-    authority: "https://cognito-idp.us-east-1.amazonaws.com/us-east-1_PApw7t541",
-    client_id: "6evgd9kupcn26vc5nmtuajqrkm",
+    authority: "https://cognito-idp.us-east-1.amazonaws.com/us-east-1_cH9mKVza7",
+    client_id: "7mamskis0o6je28qfvtr4tvftd",
     redirect_uri: `${baseUrl}/pages/callback.html`,
     response_type: "code",
     scope: "email openid phone"
@@ -20,9 +20,9 @@ export const userManager = new UserManager({
 });
 
 export async function signOutRedirect () {
-    const clientId = "6evgd9kupcn26vc5nmtuajqrkm";
+    const clientId = "7mamskis0o6je28qfvtr4tvftd";
     const logoutUri = `${baseUrl}/pages/logout.html`;
-    const cognitoDomain = "https://us-east-1papw7t541.auth.us-east-1.amazoncognito.com";
+    const cognitoDomain = "https://us-east-1_cH9mKVza7.auth.us-east-1.amazoncognito.com";
     
     // Marcamos intención de logout (se leerá al volver)
     sessionStorage.setItem('postLogoutInProgress', '1');

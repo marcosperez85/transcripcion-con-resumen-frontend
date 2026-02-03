@@ -6,7 +6,7 @@ import { userManager } from "./auth.js";
 const REGION = "us-east-1";
 
 // Es el mismo que está en "auth.js"
-const USER_POOL_ID = "us-east-1_PApw7t541"; 
+const USER_POOL_ID = "us-east-1_cH9mKVza7"; 
 
 // Obtenido del output del CDK del backend
 const IDENTITY_POOL_ID = "us-east-1:d48bc7ec-5785-47f0-a6a4-4ca30d43b3a2";
