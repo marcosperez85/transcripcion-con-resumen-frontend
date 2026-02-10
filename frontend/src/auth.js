@@ -1,31 +1,21 @@
 import { UserManager } from "oidc-client-ts";
-
-// Detectar entorno
-const isDevelopment = window.location.hostname === 'localhost';
-const baseUrl = isDevelopment
-    ? 'http://localhost:3000'
-    : 'https://d11ahn26gyfe9q.cloudfront.net';
+import { CONFIG } from "./config.js";
 
 const cognitoAuthConfig = {
-    authority: "https://cognito-idp.us-east-1.amazonaws.com/us-east-1_cH9mKVza7",
-    client_id: "7mamskis0o6je28qfvtr4tvftd",
-    redirect_uri: `${baseUrl}/pages/callback.html`,
+    authority: CONFIG.AUTHORITY,
+    client_id: CONFIG.USER_POOL_CLIENT_ID,
+    redirect_uri: CONFIG.CALLBACK_URL,
     response_type: "code",
-    scope: "email openid phone"
+    scope: "openid email"
 };
 
-// create a UserManager instance
-export const userManager = new UserManager({
-    ...cognitoAuthConfig,
-});
+export const userManager = new UserManager(cognitoAuthConfig);
 
-export async function signOutRedirect () {
-    const clientId = "7mamskis0o6je28qfvtr4tvftd";
-    const logoutUri = `${baseUrl}/pages/logout.html`;
-    const cognitoDomain = "https://us-east-1_cH9mKVza7.auth.us-east-1.amazoncognito.com";
-    
-    // Marcamos intención de logout (se leerá al volver)
-    sessionStorage.setItem('postLogoutInProgress', '1');
-    
-    window.location.href = `${cognitoDomain}/logout?client_id=${clientId}&logout_uri=${encodeURIComponent(logoutUri)}`;
-};
+export async function signOutRedirect() {
+    sessionStorage.setItem("postLogoutInProgress", "1");
+
+    window.location.href =
+        `${CONFIG.COGNITO_DOMAIN}/logout` +
+        `?client_id=${CONFIG.USER_POOL_CLIENT_ID}` +
+        `&logout_uri=${encodeURIComponent(CONFIG.BASE_URL)}`;
+}
