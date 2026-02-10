@@ -4,6 +4,6 @@ import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import { userManager } from "./auth.js";
 
 document.getElementById("loginBtn").addEventListener("click", async () => {
-    console.log("Login Presionado")
+    console.log("Login Presionado")    
     await userManager.signinRedirect();
 });
