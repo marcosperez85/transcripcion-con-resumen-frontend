@@ -1,13 +1,9 @@
 // index.mjs
 import { CognitoJwtVerifier } from "aws-jwt-verify";
 
-/** ========== CONFIG: EDITAR ESTO ========== */
-const REGION = "us-east-1";
-const USER_POOL_ID = "us-east-1_cH9mKVza7";          // tu User Pool
-const CLIENT_ID    = "7mamskis0o6je28qfvtr4tvftd";   // tu App client
-const COGNITO_DOMAIN = `https://${USER_POOL_ID}.auth.${REGION}.amazoncognito.com`;
-
-// const REDIRECT_URI  = "https://d11ahn26gyfe9q.cloudfront.net/pages/callback.html"; // tu callback final
+const USER_POOL_ID = "us-east-1_cH9mKVza7";
+const CLIENT_ID    = "7mamskis0o6je28qfvtr4tvftd"; 
+const COGNITO_DOMAIN = `https://transcripcion-376129873205.auth.us-east-1.amazoncognito.com`;
 
 // Rutas a proteger (no incluir el callback ni el logout para poder obtener el token_id)
 const PROTECTED_URIS = new Set(["/pages/app.html"]);
@@ -32,9 +28,15 @@ function buildRedirectUriFromRequest(request) {
   return `${scheme}://${host}/pages/callback.html`;
 }
 
-function redirectToLogin() {
+function redirectToLogin(request) {
   const redirectUri = buildRedirectUriFromRequest(request);
-  const loginUrl = `${COGNITO_DOMAIN}/login?client_id=${CLIENT_ID}&response_type=code&scope=openid+profile&redirect_uri=${encodeURIComponent(REDIRECT_URI)}`;
+  const loginUrl =
+    `${COGNITO_DOMAIN}/login` +
+    `?client_id=${CLIENT_ID}` +
+    `&response_type=code` +
+    `&scope=openid+email` +
+    `&redirect_uri=${encodeURIComponent(redirectUri)}`;
+
   return {
     status: "302",
     statusDescription: "Found",
@@ -44,6 +46,7 @@ function redirectToLogin() {
     },
   };
 }
+
 
 export const handler = async (event) => {
   const request = event.Records[0].cf.request;
@@ -65,4 +68,3 @@ export const handler = async (event) => {
     return redirectToLogin(request);
   }
 };
-module.exports.handler = handler;
