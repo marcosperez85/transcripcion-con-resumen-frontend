@@ -1,5 +1,7 @@
+import { CONFIG } from "./config.js";
+
 export async function iniciarTranscripcion(bucketName, fileKey, languageCode, maxSpeakers) {
-    const apiUrl = "https://yfoulcwp9a.execute-api.us-east-1.amazonaws.com/prod/transcribir";
+    const apiUrl = CONFIG.API_URL;
 
     const body = {
         s3: {

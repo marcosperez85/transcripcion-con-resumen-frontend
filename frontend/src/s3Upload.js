@@ -1,9 +1,10 @@
 import { S3Client } from "@aws-sdk/client-s3";
 import { Upload } from "@aws-sdk/lib-storage";
 import { getCognitoCredentials, getIdentityId } from "./s3Credentials.js";
+import { CONFIG } from "./config.js";
 
-const REGION = "us-east-1";
-const BUCKET_NAME = "transcripcion-con-resumen-backend-376129873205-us-east-1";
+const REGION = CONFIG.REGION;
+const BUCKET_NAME = CONFIG.BUCKET_NAME;
 
 /**
  * Sube un archivo a S3 usando Cognito Identity (rol "authenticated")

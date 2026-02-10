@@ -1,4 +1,6 @@
-const apiUrl = "https://yfoulcwp9a.execute-api.us-east-1.amazonaws.com/prod/transcribir";
+import { CONFIG } from "./config.js";
+
+const apiUrl = CONFIG.API_URL;
 
 // Función auxiliar para POST + unwrapping del body de API Gateway/Lambda
 async function post(payload) {
