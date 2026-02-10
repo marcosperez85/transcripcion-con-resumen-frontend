@@ -21,7 +21,6 @@ export const CONFIG = {
     
     get COGNITO_DOMAIN() {
         return `https://transcripcion-376129873205.auth.us-east-1.amazoncognito.com`
-        // return `https://${this.USER_POOL_ID}.auth.${this.REGION}.amazoncognito.com`;
     },
     
     get AUTHORITY() {
