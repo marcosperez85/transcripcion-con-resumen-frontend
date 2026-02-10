@@ -4,11 +4,10 @@ import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import { uploadFileToS3 } from './s3Upload.js';
 import { iniciarTranscripcion } from './transcribe.js';
 import { checkTranscriptionStatus, getTranscriptionResults } from './statusChecker.js';
-import { userManager } from "./auth.js";
-import { getIdentityId } from './s3Credentials.js';
+import { CONFIG } from "./config.js";
 
 const $formulario = document.getElementById('uploadForm');
-const nombreDelBucket = "transcripcion-con-resumen-backend-376129873205-us-east-1";
+const nombreDelBucket = CONFIG.BUCKET_NAME;
 
 // ********* Inicializar el resto de los procesos de la app *********
 
