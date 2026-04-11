@@ -1,4 +1,4 @@
-import { CONFIG } from "./config.js";
+import { CONFIG, authFetch } from "./config.js";
 
 export async function iniciarTranscripcion(bucketName, fileKey, languageCode, maxSpeakers) {
     const apiUrl = CONFIG.API_URL;
@@ -15,9 +15,8 @@ export async function iniciarTranscripcion(bucketName, fileKey, languageCode, ma
     };
     
     console.log("Body enviado:", body)
-    const response = await fetch(apiUrl, {
+    const response = await authFetch(apiUrl, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body)
     });
 
