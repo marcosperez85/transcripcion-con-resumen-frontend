@@ -1,24 +1,21 @@
-import { CONFIG } from "./config.js";
+import { CONFIG, authFetch } from "./config.js";
 
 const apiUrl = CONFIG.API_URL;
 
 // Función auxiliar para POST + unwrapping del body de API Gateway/Lambda
 async function post(payload) {
-  const response = await fetch(apiUrl, {
+
+  const response = await authFetch(apiUrl, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),
   });
 
   if (!response.ok) {
-    // Si la integración devolvió 4xx/5xx a nivel HTTP
     throw new Error(`Error ${response.status}: ${response.statusText}`);
   }
 
-  // raw es del estilo: { statusCode, headers, body: "<json string>" } o directamente el objeto útil
   const raw = await response.json();
 
-  // Si existe raw.body y es string, parseamos; si no, devolvemos raw.body o raw
   if (raw && typeof raw.body === "string") {
     try {
       return JSON.parse(raw.body);
@@ -27,7 +24,7 @@ async function post(payload) {
       throw e;
     }
   }
-  // Algunos mapeos pueden enviar el objeto ya “desenvuelto”
+
   return raw?.body ?? raw;
 }
 
