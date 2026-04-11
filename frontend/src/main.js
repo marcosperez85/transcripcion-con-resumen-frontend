@@ -1,6 +1,7 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
+import { getAudioDuration } from "./audioUtils.js";
 import { uploadFileToS3 } from './s3Upload.js';
 import { iniciarTranscripcion } from './transcribe.js';
 import { checkTranscriptionStatus, getTranscriptionResults } from './statusChecker.js';
@@ -284,6 +285,16 @@ $formulario.addEventListener('submit', async (e) => {
     processingInProgress = true;
 
     try {
+
+        const duration = await getAudioDuration(file);
+        const MAX_DURATION = 30 * 60;
+
+        if (duration > MAX_DURATION) {
+            alert("La versión beta permite audios de hasta 30 minutos.");
+            return;
+        }
+
+        console.log("Duración audio:", duration);
         // Mostrar contenedor y estados iniciales
         const rc = createResultsContainer();
         const tNode = document.getElementById('transcriptionText');
@@ -315,6 +326,12 @@ $formulario.addEventListener('submit', async (e) => {
         processingInProgress = false;
     }
 });
+
+function showError(msg) {
+    document.getElementById("uploadError").textContent = msg;
+}
+
+showError("La beta permite audios de hasta 30 minutos.");
 
 // Initialize UI when DOM is loaded
 document.addEventListener('DOMContentLoaded', initializeUI);
