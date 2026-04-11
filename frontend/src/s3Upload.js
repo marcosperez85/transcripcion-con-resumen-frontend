@@ -44,11 +44,11 @@ export async function uploadFileToS3(file, fileName) {
             Bucket: BUCKET_NAME,
             Key,
             Body: file, // en navegador, File/Blob va perfecto
-            ContentType: (file && file.type) || "application/octet-stream",
+            ContentType: (file && file.type) || "application/octet-stream"
         },
         // Opcional: tunear multipart en uploads grandes
-        // queueSize: 3,
-        // partSize: 5 * 1024 * 1024,
+        queueSize: 3,
+        partSize: 8 * 1024 * 1024,
     });
 
     parallelUploads3.on("httpUploadProgress", (p) => {
