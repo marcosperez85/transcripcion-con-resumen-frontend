@@ -11,6 +11,14 @@ const cognitoAuthConfig = {
 
 export const userManager = new UserManager(cognitoAuthConfig);
 
+// Guardar el token en localStorage cuando se obtiene un nuevo usuario
+userManager.events.addUserLoaded((user) => {
+    if (user && user.id_token) {
+        localStorage.setItem("id_token", user.id_token);
+    }
+});
+
+
 export async function signOutRedirect() {
     sessionStorage.setItem("postLogoutInProgress", "1");
 
