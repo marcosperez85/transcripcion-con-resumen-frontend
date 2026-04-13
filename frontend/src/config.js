@@ -1,5 +1,6 @@
 // Detectar entorno
 const isDevelopment = window.location.hostname === 'localhost';
+import { userManager } from "./auth.js";
 
 export const CONFIG = {
     REGION: "us-east-1",
@@ -39,7 +40,8 @@ export const CONFIG = {
 // Helper para hacer requests autenticados al backend
 export async function authFetch(url, options = {}) {
     // Usar solamente localStorage para obtener el token
-    const token = localStorage.getItem("id_token");
+    const user = await userManager.getUser();
+    const token = user?.id_token;
 
     console.log("Token disponible para fetch:", token ? "Sí (primeros caracteres: " + token.substring(0, 10) + "...)" : "No");
 

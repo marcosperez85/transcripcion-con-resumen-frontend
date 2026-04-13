@@ -2,6 +2,7 @@ import { S3Client } from "@aws-sdk/client-s3";
 import { Upload } from "@aws-sdk/lib-storage";
 import { getCognitoCredentials, getIdentityId } from "./s3Credentials.js";
 import { CONFIG } from "./config.js";
+import { userManager } from "./auth.js";
 
 const REGION = CONFIG.REGION;
 const BUCKET_NAME = CONFIG.BUCKET_NAME;
@@ -17,7 +18,7 @@ export async function uploadFileToS3(file, fileName) {
 
     // Esto devuelve un provider (función)
     const provider = await getCognitoCredentials();
-    
+
 
     // Fuerzo la resolución para inspeccionar 
     const creds = await provider();
@@ -35,8 +36,15 @@ export async function uploadFileToS3(file, fileName) {
     });
 
     // 2) Prefijo por usuario, acorde a la policy del rol
-    const identityId = await getIdentityId(); // ej: us-east-1:xxxx-...
-    const Key = `audios/${identityId}/${fileName}`;
+    const identityId = await getIdentityId();
+
+    const user = await userManager.getUser();
+    if (!user || user.expired) {
+        throw new Error("Usuario no autenticado.");
+    }
+
+    const userSub = user.profile.sub;
+    const Key = `audios/${userSub}/${identityId}/${fileName}`;
 
     const parallelUploads3 = new Upload({
         client: s3,
