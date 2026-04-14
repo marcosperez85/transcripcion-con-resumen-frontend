@@ -1,4 +1,3 @@
-import { UserManager } from "oidc-client-ts";
 import { CONFIG } from "./config.js";
 import { UserManager, WebStorageStateStore } from "oidc-client-ts";
 
