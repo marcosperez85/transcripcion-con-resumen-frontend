@@ -6,6 +6,7 @@
     "build:frontend": "npm -w frontend ci && npm -w frontend run build",
     "synth": "npm run build:frontend && cd infra && cdk synth",
     "deploy": "npm run build:frontend && cd infra && cdk deploy",
+    "deploy:fast": "npm run build:frontend && aws s3 sync frontend/dist s3://transcripcion-con-resumen-frontend-376129873205-us-east-1 --delete && aws cloudfront create-invalidation --distribution-id E3JIWBABET2DXX --paths \"/*\"",
     "destroy": "cd infra && cdk destroy --force"
   }
 }
