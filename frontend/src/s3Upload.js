@@ -44,7 +44,10 @@ export async function uploadFileToS3(file, fileName) {
     }
 
     const userSub = user.profile.sub;
-    const Key = `audios/${userSub}/${identityId}/${fileName}`;
+    const Key = `audios/${identityId}/${fileName}`;
+    const Metadata = {
+        userSub: userSub
+    };
 
     const parallelUploads3 = new Upload({
         client: s3,
