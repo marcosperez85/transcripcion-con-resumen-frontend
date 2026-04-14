@@ -1,6 +1,5 @@
 from pathlib import Path
 from constructs import Construct
-from aws_cdk.aws_cloudfront.experimental import EdgeFunction
 from aws_cdk import (
     Stack,
     CfnOutput,
@@ -9,38 +8,51 @@ from aws_cdk import (
     aws_cloudfront as cloudfront,
     aws_cloudfront_origins as origins,
     aws_s3_deployment as s3deploy,
-    aws_lambda as _lambda,
-    aws_cloudfront_origins as origins,
 )
 
 class FrontendInfraStack(Stack):
     def __init__(self, scope: Construct, construct_id: str, **kwargs) -> None:
-        super().__init__(scope, construct_id, **kwargs)              
+        super().__init__(scope, construct_id, **kwargs)
 
-        # Resolver repo root desde este archivo: /repo/infra/infra/infra_stack.py -> parents[2] = /repo
+        # Resolve repo root
         repo_root = Path(__file__).resolve().parents[2]
         site_path = (repo_root / "frontend" / "dist").resolve()
 
         bucket_name = f"transcripcion-con-resumen-frontend-{self.account}-{self.region}"
 
-        # Guardas claras
+        # Validate build exists
         if not site_path.exists() or not (site_path / "index.html").exists():
             raise FileNotFoundError(
                 f"No se encontró un build válido en: {site_path}\n"
-                "Ejecutá 'npm run build' desde la raíz (o 'npm run deploy' que ya lo hace)."
+                "Ejecutá 'npm run build'."
             )
 
-        # 1) Crear la función de autenticación en el Edge (Node 18 recomendado)
-        # Instalar y compilar (desde la carpeta infra/lambda/auth-edge) con npm install && npm run build
-        edge_fn = EdgeFunction(
+        # 🟢 1. CloudFront Function (replaces Lambda@Edge)
+        auth_function = cloudfront.Function(
             self,
-            "AuthAtEdge",
-            runtime=_lambda.Runtime.NODEJS_18_X,
-            handler="index.handler",
-            code=_lambda.Code.from_asset("lambda/auth-edge/dist"),  # tu bundle
+            "AuthFunction",
+            code=cloudfront.FunctionCode.from_inline("""
+function handler(event) {
+    var request = event.request;
+    var headers = request.headers;
+
+    // Check for token (cookie OR Authorization header)
+    if (!headers.authorization && !headers.cookie) {
+        return {
+            statusCode: 302,
+            statusDescription: 'Redirect to login',
+            headers: {
+                location: { value: '/login.html' }
+            }
+        };
+    }
+
+    return request;
+}
+""")
         )
 
-        # Bucket privado (sirve vía CloudFront)
+        # 🟢 2. Private S3 bucket
         website_bucket = s3.Bucket(
             self,
             "WebsiteBucket",
@@ -51,9 +63,10 @@ class FrontendInfraStack(Stack):
             auto_delete_objects=True,
         )
 
-        # CloudFront con origen S3
+        # 🟢 3. CloudFront distribution
         distribution = cloudfront.Distribution(
-            self, "Web",
+            self,
+            "Web",
             default_behavior=cloudfront.BehaviorOptions(
                 origin=origins.S3Origin(website_bucket),
                 cache_policy=cloudfront.CachePolicy.CACHING_OPTIMIZED,
@@ -63,18 +76,17 @@ class FrontendInfraStack(Stack):
                 "/pages/*": cloudfront.BehaviorOptions(
                     origin=origins.S3Origin(website_bucket),
                     cache_policy=cloudfront.CachePolicy.CACHING_DISABLED,
-                    edge_lambdas=[
-                        cloudfront.EdgeLambda(
-                            function_version=edge_fn.current_version,
-                            event_type=cloudfront.LambdaEdgeEventType.VIEWER_REQUEST,
-                            include_body=False,
+                    function_associations=[
+                        cloudfront.FunctionAssociation(
+                            function=auth_function,
+                            event_type=cloudfront.FunctionEventType.VIEWER_REQUEST
                         )
-                    ],
+                    ]
                 )
             },
         )
 
-        # Deploy de /frontend/dist al bucket + invalidación en CF
+        # 🟢 4. Deploy frontend build
         s3deploy.BucketDeployment(
             self,
             "DeployWebsite",
@@ -84,6 +96,7 @@ class FrontendInfraStack(Stack):
             distribution_paths=["/*"],
         )
 
+        # Outputs
         CfnOutput(
             self,
             "CloudFrontURL",
@@ -92,5 +105,4 @@ class FrontendInfraStack(Stack):
         )
 
         CfnOutput(self, "DistributionId", value=distribution.distribution_id)
-
         CfnOutput(self, "BucketName", value=website_bucket.bucket_name)
