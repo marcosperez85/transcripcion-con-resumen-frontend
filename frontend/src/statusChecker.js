@@ -1,4 +1,18 @@
-import { CONFIG, authFetch } from "./config.js";
+export async function checkUserUsage() {
+  // Esta función podría implementarse en el backend para obtener el uso actual del usuario
+  // Por ahora simulamos un endpoint ficticio
+  try {
+    const response = await post({ checkUsage: true });
+    return {
+      used: response.usedSeconds || 0,
+      limit: response.limitSeconds || 600,
+      remaining: response.remainingSeconds || 600
+    };
+  } catch (error) {
+    console.error('Error checking usage:', error);
+    return null;
+  }
+}import { CONFIG, authFetch } from "./config.js";
 
 const apiUrl = CONFIG.API_URL;
 
