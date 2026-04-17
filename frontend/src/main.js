@@ -4,20 +4,33 @@ import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import { getAudioDuration } from "./audioUtils.js";
 import { uploadFileToS3 } from './s3Upload.js';
 import { iniciarTranscripcion } from './transcribe.js';
-import { checkTranscriptionStatus, getTranscriptionResults } from './statusChecker.js';
+import { checkTranscriptionStatus, getTranscriptionResults, checkUserUsage } from './statusChecker.js';
 import { CONFIG } from "./config.js";
 
 const $formulario = document.getElementById('uploadForm');
 const nombreDelBucket = CONFIG.BUCKET_NAME;
+
+// Constantes para límites de uso
+const MAX_MINUTES_FREE = 10;
+const MAX_DURATION_SECONDS = MAX_MINUTES_FREE * 60;
 
 // ********* Inicializar el resto de los procesos de la app *********
 
 // Variable para evitar múltiples procesos simultáneos
 let processingInProgress = false;
 
+// Datos de uso del usuario
+let userUsage = {
+    used: 0,
+    limit: MAX_DURATION_SECONDS,
+    remaining: MAX_DURATION_SECONDS
+};
+
 // Crear barra de estado y contenedor de resultados
 function initializeUI() {
     createFileUploadHandlers();
+    createUsageIndicator();
+    fetchUserUsage();
 }
 
 function createFileUploadHandlers() {
@@ -287,10 +300,11 @@ $formulario.addEventListener('submit', async (e) => {
     try {
 
         const duration = await getAudioDuration(file);
-        const MAX_DURATION = 30 * 60;
-
-        if (duration > MAX_DURATION) {
-            alert("La versión beta permite audios de hasta 30 minutos.");
+        
+        // Asegurarse de usar la constante definida
+        if (duration > MAX_DURATION_SECONDS) {
+            alert(`La versión gratis permite procesar hasta ${MAX_MINUTES_FREE} minutos.`);
+            processingInProgress = false;
             return;
         }
 
@@ -313,25 +327,155 @@ $formulario.addEventListener('submit', async (e) => {
         if (tNode) tNode.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Iniciando transcripción...';
 
         // const jobName = await iniciarTranscripcion(nombreDelBucket, key, idioma, speakers);
-        const jobName = await iniciarTranscripcion(Bucket, Key, idioma, speakers);
+        const response = await iniciarTranscripcion(Bucket, Key, idioma, speakers);
 
-        const actualJobName = jobName.job_name || jobName.JobName || jobName;
-        console.log("Using job name:", actualJobName);
-
-        pollTranscriptionStatus(actualJobName);
+        // Actualizar datos de uso si la respuesta los incluye
+        if (response && typeof response === 'object') {
+            const jobName = response.jobName || response.JobName || response;
+            
+            // Si la respuesta incluye datos de uso, actualizar UI
+            if (response.usedSeconds !== undefined) {
+                updateUsageData({
+                    used: response.usedSeconds,
+                    limit: response.limitSeconds || MAX_DURATION_SECONDS
+                });
+            }
+            
+            console.log("Using job name:", jobName);
+            pollTranscriptionStatus(jobName);
+        } else {
+            const actualJobName = response;
+            console.log("Using job name:", actualJobName);
+            pollTranscriptionStatus(actualJobName);
+        }
     } catch (error) {
         console.error("Error:", error);
         const tNode = document.getElementById('transcriptionText');
-        if (tNode) tNode.innerHTML = `<p class="text-danger">Error: ${error.message}</p>`;
+        
+        // Manejar error de límite excedido
+        if (error.message && error.message.includes("Usage limit reached")) {
+            if (tNode) tNode.innerHTML = `<p class="text-danger">Has alcanzado el límite de ${MAX_MINUTES_FREE} minutos de transcripción.</p>`;
+            
+            // Actualizar el indicador de uso
+            try {
+                const data = JSON.parse(error.message.replace("Error 403: ", ""));
+                if (data.usedSeconds && data.limitSeconds) {
+                    updateUsageData({
+                        used: data.usedSeconds,
+                        limit: data.limitSeconds
+                    });
+                }
+            } catch (parseError) {
+                console.error("Error parsing usage data", parseError);
+            }
+        } else {
+            if (tNode) tNode.innerHTML = `<p class="text-danger">Error: ${error.message}</p>`;
+        }
+        
         processingInProgress = false;
     }
 });
 
 function showError(msg) {
-    document.getElementById("uploadError").textContent = msg;
+    const errorElement = document.getElementById("uploadError");
+    if (errorElement) {
+        errorElement.textContent = msg;
+    }
 }
 
-showError("La beta permite audios de hasta 30 minutos.");
+// Crear indicador de uso
+function createUsageIndicator() {
+    // Verificar si ya existe
+    if (document.getElementById('usageIndicator')) return;
+    
+    const formDiv = document.querySelector('.upload-card');
+    if (!formDiv) return;
+    
+    const usageIndicator = document.createElement('div');
+    usageIndicator.id = 'usageIndicator';
+    usageIndicator.className = 'usage-indicator mt-4';
+    usageIndicator.innerHTML = `
+        <div class="usage-header">
+            <i class="fas fa-chart-pie me-2"></i>
+            <span>Uso de minutos gratuitos</span>
+        </div>
+        <div class="usage-bar-container">
+            <div id="usageBar" class="usage-bar" style="width: 0%;"></div>
+        </div>
+        <div class="usage-details">
+            <span id="usageText">Cargando datos de uso...</span>
+            <span id="usageLimit"></span>
+        </div>
+    `;
+    
+    // Insertar al final del formulario
+    formDiv.appendChild(usageIndicator);
+}
+
+// Actualizar datos de uso en UI
+function updateUsageData(data) {
+    if (!data) return;
+    
+    userUsage.used = data.used || 0;
+    userUsage.limit = data.limit || MAX_DURATION_SECONDS;
+    userUsage.remaining = Math.max(0, userUsage.limit - userUsage.used);
+    
+    // Actualizar indicador visual
+    const usageBar = document.getElementById('usageBar');
+    const usageText = document.getElementById('usageText');
+    const usageLimit = document.getElementById('usageLimit');
+    
+    if (!usageBar || !usageText || !usageLimit) return;
+    
+    // Calcular porcentaje y actualizar barra
+    const usedPercent = Math.min(100, (userUsage.used / userUsage.limit) * 100);
+    usageBar.style.width = `${usedPercent}%`;
+    
+    // Cambiar color según uso
+    if (usedPercent > 90) {
+        usageBar.classList.add('usage-critical');
+    } else if (usedPercent > 70) {
+        usageBar.classList.add('usage-warning');
+    }
+    
+    // Actualizar texto
+    const usedMinutes = Math.floor(userUsage.used / 60);
+    const usedSeconds = userUsage.used % 60;
+    const remainingMinutes = Math.floor(userUsage.remaining / 60);
+    const remainingSeconds = userUsage.remaining % 60;
+    
+    usageText.innerHTML = `<strong>Usado:</strong> ${usedMinutes}m ${usedSeconds}s`;
+    usageLimit.innerHTML = `<strong>Restante:</strong> ${remainingMinutes}m ${remainingSeconds}s`;
+}
+
+// Obtener datos de uso del usuario actual
+async function fetchUserUsage() {
+    try {
+        // Intentar obtener datos de uso del servidor
+        const usageData = await checkUserUsage();
+        
+        // Si tenemos datos, actualizar UI
+        if (usageData) {
+            updateUsageData(usageData);
+        } else {
+            // Fallback a valores por defecto
+            updateUsageData({
+                used: 0,
+                limit: MAX_DURATION_SECONDS
+            });
+        }
+        
+    } catch (error) {
+        console.error('Error al obtener datos de uso:', error);
+        // Fallback a valores por defecto
+        updateUsageData({
+            used: 0,
+            limit: MAX_DURATION_SECONDS
+        });
+    }
+}
+
+showError(`Tenés ${MAX_MINUTES_FREE} minutos gratis para probar la app.`);
 
 // Initialize UI when DOM is loaded
 document.addEventListener('DOMContentLoaded', initializeUI);
