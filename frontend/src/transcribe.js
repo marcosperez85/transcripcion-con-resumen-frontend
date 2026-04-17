@@ -14,22 +14,42 @@ export async function iniciarTranscripcion(bucketName, fileKey, languageCode, ma
         }
     };
     
-    console.log("Body enviado:", body)
+    console.log("Body enviado:", body);
     const response = await authFetch(apiUrl, {
         method: 'POST',
         body: JSON.stringify(body)
     });
 
     if (!response.ok) {
-        throw new Error(`Error ${response.status}: ${response.statusText}`);
+        const errorText = await response.text();
+        let errorMessage = `Error ${response.status}: ${response.statusText}`;
+        
+        // Si hay un mensaje de error en formato JSON, extraerlo
+        try {
+            const errorData = JSON.parse(errorText);
+            if (errorData.error) {
+                errorMessage = errorData.error;
+                if (errorData.usedSeconds !== undefined && errorData.limitSeconds !== undefined) {
+                    // Añadir datos de uso al mensaje de error para procesarlo
+                    const usageData = {
+                        usedSeconds: errorData.usedSeconds,
+                        limitSeconds: errorData.limitSeconds
+                    };
+                    errorMessage = JSON.stringify(usageData);
+                }
+            }
+        } catch (e) {
+            console.error("Error parsing error response:", e);
+        }
+        
+        throw new Error(errorMessage);
     }
 
     // Parsear la respuesta
     const data = await response.json();
 
-    // Trabajar con el objeto completo que vino del backend
-    const jobName = data.jobName;
-    console.log(`El Job Name recibido es: ${jobName}`);
-
-    return jobName
+    console.log("Respuesta completa:", data);
+    
+    // Devolver el objeto completo para que se pueda acceder a más datos
+    return data;
 }
