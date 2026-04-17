@@ -28,3 +28,13 @@ export async function signOutRedirect() {
         `?client_id=${CONFIG.USER_POOL_CLIENT_ID}` +
         `&logout_uri=${encodeURIComponent(CONFIG.BASE_URL)}`;
 }
+
+// Nueva función para redirigir al usuario a la página de registro
+export function redirectToSignUp() {
+    window.location.href =
+        `${CONFIG.COGNITO_DOMAIN}/signup` +
+        `?client_id=${CONFIG.USER_POOL_CLIENT_ID}` +
+        `&response_type=code` +
+        `&scope=openid+email` +
+        `&redirect_uri=${encodeURIComponent(CONFIG.CALLBACK_URL)}`;
+}
