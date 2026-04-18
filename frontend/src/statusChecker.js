@@ -1,8 +1,10 @@
 export async function checkUserUsage() {
-  // Esta función podría implementarse en el backend para obtener el uso actual del usuario
-  // Por ahora simulamos un endpoint ficticio
   try {
+    // Llamar al endpoint real para obtener el uso actual del usuario
     const response = await post({ checkUsage: true });
+    
+    console.log('Datos de uso recibidos:', response);
+    
     return {
       used: response.usedSeconds || 0,
       limit: response.limitSeconds || 600,
