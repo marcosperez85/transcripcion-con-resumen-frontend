@@ -8,13 +8,23 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../src/styles.css">
 
-    <script type="module">
+        <script type="module">
         import { userManager } from "../src/auth.js";
+        import { checkUserUsage } from "../src/statusChecker.js";
 
         (async () => {
             const user = await userManager.getUser();
             if (!user || user.expired) {
-                await userManager.signinRedirect(); // 🔹 Redirige directo a Cognito
+                await userManager.signinRedirect();
+            } else {
+                // Al verificar que el usuario está autenticado, intentamos obtener datos de uso
+                try {
+                    // Esta función se ejecuta cuando se carga la página
+                    // Los datos de uso se mostrarán cuando se inicialice la UI desde main.js
+                    await checkUserUsage();
+                } catch (error) {
+                    console.error("Error cargando datos de uso:", error);
+                }
             }
         })();
     </script>
@@ -58,29 +68,29 @@
                             </div>
                         </div>
 
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="idioma" class="form-label">
-                                    <i class="fas fa-language me-2"></i>Idioma (opcional)
-                                </label>
-                                <select class="form-select" id="idioma">
-                                    <option value="es-ES">Español (España)</option>
-                                    <option value="es-MX">Español (México)</option>
-                                    <option value="en-US">English (US)</option>
-                                    <option value="en-GB">English (UK)</option>
-                                    <option value="fr-FR">Français</option>
-                                    <option value="pt-BR">Português (Brasil)</option>
-                                </select>
-                            </div>
+                                                <div class="row">
+                                                    <div class="col-md-6 mb-3">
+                                                        <label for="idioma" class="form-label">
+                                                            <i class="fas fa-language me-2"></i>Idioma (opcional)
+                                                        </label>
+                                                        <select class="form-select" id="idioma">
+                                                            <option value="es-ES">Español (España)</option>
+                                                            <option value="es-MX">Español (México)</option>
+                                                            <option value="en-US">English (US)</option>
+                                                            <option value="en-GB">English (UK)</option>
+                                                            <option value="fr-FR">Français</option>
+                                                            <option value="pt-BR">Português (Brasil)</option>
+                                                        </select>
+                                                    </div>
 
-                            <div class="col-md-6 mb-3">
-                                <label for="speakers" class="form-label">
-                                    <i class="fas fa-users me-2"></i>Número de Hablantes (opcional)
-                                </label>
-                                <input class="form-control" type="number" id="speakers" min="1" max="10" value="2">
-                                <div id="uploadError" style="color:red;margin-top:10px;"></div>
-                            </div>
-                        </div>
+                                                    <div class="col-md-6 mb-3">
+                                                        <label for="speakers" class="form-label">
+                                                            <i class="fas fa-users me-2"></i>Número de Hablantes (opcional)
+                                                        </label>
+                                                        <input class="form-control" type="number" id="speakers" min="1" max="10" value="2">
+                                                        <div id="uploadError" style="color:red;margin-top:10px;"></div>
+                                                    </div>
+                                                </div>
 
                         <div class="text-center">
                             <button type="submit" class="btn btn-primary btn-lg px-5">
