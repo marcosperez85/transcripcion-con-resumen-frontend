@@ -254,6 +254,9 @@ function displayResults(results) {
     } else {
         summaryText.innerHTML = '<p class="text-muted">No se encontró resumen</p>';
     }
+    
+    // Actualizar la barra de uso después de completar una transcripción
+    fetchUserUsage();
 
     processingInProgress = false;
 }
@@ -294,7 +297,7 @@ $formulario.addEventListener('submit', async (e) => {
     const file = fileInput.files[0];
     const idioma = idiomaInput.value;
     const speakers = parseInt(speakersInput.value);
-
+        
     processingInProgress = true;
 
     try {
@@ -324,21 +327,36 @@ $formulario.addEventListener('submit', async (e) => {
 
         const { Bucket, Key } = await uploadFileToS3(file, file.name);
 
-        if (tNode) tNode.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Iniciando transcripción...';
+                if (tNode) tNode.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Iniciando transcripción...';
 
+        // Preparar parámetros para la transcripción
+        const transcriptionRequest = {
+            Bucket: Bucket, 
+            Key: Key, 
+            idioma: idioma, 
+            speakers: speakers
+        };
+        
         // const jobName = await iniciarTranscripcion(nombreDelBucket, key, idioma, speakers);
-        const response = await iniciarTranscripcion(Bucket, Key, idioma, speakers);
+        const response = await iniciarTranscripcion(transcriptionRequest);
 
         // Actualizar datos de uso si la respuesta los incluye
         if (response && typeof response === 'object') {
             const jobName = response.jobName || response.JobName || response;
             
-            // Si la respuesta incluye datos de uso, actualizar UI
-            if (response.usedSeconds !== undefined) {
-                updateUsageData({
-                    used: response.usedSeconds,
-                    limit: response.limitSeconds || MAX_DURATION_SECONDS
-                });
+            // Si la respuesta incluye datos de uso o estimatedDuration, actualizar UI
+            if (response.usedSeconds !== undefined || response.estimatedDuration !== undefined) {
+                // Si tenemos usedSeconds, usar eso directamente
+                if (response.usedSeconds !== undefined) {
+                    updateUsageData({
+                        used: response.usedSeconds,
+                        limit: response.limitSeconds || MAX_DURATION_SECONDS
+                    });
+                } 
+                // Si no tenemos usedSeconds pero tenemos estimatedDuration, actualizar con fetchUserUsage
+                else if (response.estimatedDuration !== undefined) {
+                    fetchUserUsage(); // Actualizar los datos de uso desde el servidor
+                }
             }
             
             console.log("Using job name:", jobName);
@@ -347,6 +365,9 @@ $formulario.addEventListener('submit', async (e) => {
             const actualJobName = response;
             console.log("Using job name:", actualJobName);
             pollTranscriptionStatus(actualJobName);
+            
+            // Intentar actualizar los datos de uso desde el servidor
+            fetchUserUsage();
         }
     } catch (error) {
         console.error("Error:", error);
@@ -457,25 +478,32 @@ async function fetchUserUsage() {
         // Si tenemos datos, actualizar UI
         if (usageData) {
             updateUsageData(usageData);
+            return usageData;
         } else {
             // Fallback a valores por defecto
-            updateUsageData({
+            const defaultData = {
                 used: 0,
-                limit: MAX_DURATION_SECONDS
-            });
+                limit: MAX_DURATION_SECONDS,
+                remaining: MAX_DURATION_SECONDS
+            };
+            updateUsageData(defaultData);
+            return defaultData;
         }
         
     } catch (error) {
         console.error('Error al obtener datos de uso:', error);
         // Fallback a valores por defecto
-        updateUsageData({
+        const defaultData = {
             used: 0,
-            limit: MAX_DURATION_SECONDS
-        });
+            limit: MAX_DURATION_SECONDS,
+            remaining: MAX_DURATION_SECONDS
+        };
+        updateUsageData(defaultData);
+        return defaultData;
     }
 }
 
-showError(`Tenés ${MAX_MINUTES_FREE} minutos gratis para probar la app.`);
+// showError(`Tenés ${MAX_MINUTES_FREE} minutos gratis para probar la app.`);
 
 // Initialize UI when DOM is loaded
 document.addEventListener('DOMContentLoaded', initializeUI);
