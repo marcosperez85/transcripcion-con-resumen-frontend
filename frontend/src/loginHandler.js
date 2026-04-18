@@ -8,6 +8,11 @@ document.getElementById("loginBtn").addEventListener("click", async () => {
     await userManager.signinRedirect();
 });
 
+document.getElementById("comenzarBtn1").addEventListener("click", async () => {
+    console.log("Comenzar Presionado")    
+    await userManager.signinRedirect();
+});
+
 // Añadir evento para el botón de registro
 const registerBtn = document.getElementById("registerBtn");
 if (registerBtn) {
