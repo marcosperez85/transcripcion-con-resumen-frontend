@@ -1,9 +1,15 @@
 import { CONFIG, authFetch } from "./config.js";
 
-export async function iniciarTranscripcion(bucketName, fileKey, languageCode, maxSpeakers) {
+export async function iniciarTranscripcion(params) {
     const apiUrl = CONFIG.API_URL;
 
-    const body = {
+        // Extraer parámetros de transcripción del objeto params
+    const bucketName = params.Bucket || params.bucketName;
+    const fileKey = params.Key || params.key;
+    const languageCode = params.idioma || params.languageCode || "es-ES";
+    const maxSpeakers = params.speakers || params.maxSpeakers || 2;
+
+        const body = {
         s3: {
             bucketName: bucketName,
             key: fileKey
@@ -12,6 +18,7 @@ export async function iniciarTranscripcion(bucketName, fileKey, languageCode, ma
             languageCode: languageCode,
             maxSpeakers: maxSpeakers
         }
+        // El modo de prueba solo se controla desde el backend
     };
     
     console.log("Body enviado:", body);
