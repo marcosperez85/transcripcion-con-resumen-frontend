@@ -63,7 +63,9 @@ export async function uploadFileToS3(file, fileName) {
     });
 
     parallelUploads3.on("httpUploadProgress", (p) => {
-        console.log("Progreso:", p);
+        // Log completo para debugging
+        // No exponer en producción porque revela bucket de subida del audio
+        // console.log("Progreso:", p);
     });
 
     await parallelUploads3.done();
