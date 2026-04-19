@@ -105,7 +105,7 @@ function createResultsContainer() {
     resultsContainer.id = 'resultsContainer';
     resultsContainer.className = 'row justify-content-center mt-4';
     resultsContainer.innerHTML = `
-        <div class="col-lg-8">
+        <div class="col-lg-9">
             <div class="results-container">
                 <div id="transcriptionSection">
                     <div class="results-header">
@@ -141,6 +141,8 @@ async function pollTranscriptionStatus(jobName) {
     let pollAttempts = 0;
     const maxPollAttempts = 150; // ~5 min (150 * 2s)
 
+    let summaryReady = false
+
     const poll = async () => {
         try {
             pollAttempts++;
@@ -165,8 +167,7 @@ async function pollTranscriptionStatus(jobName) {
             }
 
             const transcriptionStatus = status.status || status.TranscriptionJobStatus;
-            const formattedReady = !!status.formattedReady;
-            const summaryReady = !!status.summaryReady;
+            const jobStatus = status.jobStatus;
 
             const tNode = document.getElementById('transcriptionText');
             const sNode = document.getElementById('summaryText');
@@ -190,8 +191,28 @@ async function pollTranscriptionStatus(jobName) {
                 return;
             }
 
+            if (jobStatus === 'PROCESSING') {
+                if (tNode) {
+                    tNode.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Transcribiendo audio...';
+                }
+            }
+
+            if (jobStatus === 'FORMATTED') {
+                if (tNode) {
+                    tNode.innerHTML = '<i class="fas fa-check me-2 text-success"></i>Transcripción lista';
+                    tNode.classList.remove('loading-pulse');
+                }
+                if (sNode) {
+                    sNode.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Generando resumen...';
+                }
+            }
+
+            if (jobStatus === 'DONE') {
+                summaryReady = true;
+            }
+
             // Cuando todo está completo, obtenemos resultados
-            if (transcriptionStatus === 'COMPLETED' && formattedReady && summaryReady) {
+            if (transcriptionStatus === 'COMPLETED' && jobStatus === 'DONE') {
                 try {
                     const results = await getTranscriptionResults(nombreDelBucket, jobName);
                     console.log("Results received:", results);
@@ -254,7 +275,7 @@ function displayResults(results) {
     } else {
         summaryText.innerHTML = '<p class="text-muted">No se encontró resumen</p>';
     }
-    
+
     // Actualizar la barra de uso después de completar una transcripción
     fetchUserUsage();
 
@@ -297,13 +318,13 @@ $formulario.addEventListener('submit', async (e) => {
     const file = fileInput.files[0];
     const idioma = idiomaInput.value;
     const speakers = parseInt(speakersInput.value);
-        
+
     processingInProgress = true;
 
     try {
 
         const duration = await getAudioDuration(file);
-        
+
         // Asegurarse de usar la constante definida
         if (duration > MAX_DURATION_SECONDS) {
             alert(`La versión gratis permite procesar hasta ${MAX_MINUTES_FREE} minutos.`);
@@ -327,23 +348,23 @@ $formulario.addEventListener('submit', async (e) => {
 
         const { Bucket, Key } = await uploadFileToS3(file, file.name);
 
-                if (tNode) tNode.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Iniciando transcripción...';
+        if (tNode) tNode.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Iniciando transcripción...';
 
         // Preparar parámetros para la transcripción
         const transcriptionRequest = {
-            Bucket: Bucket, 
-            Key: Key, 
-            idioma: idioma, 
+            Bucket: Bucket,
+            Key: Key,
+            idioma: idioma,
             speakers: speakers
         };
-        
+
         // const jobName = await iniciarTranscripcion(nombreDelBucket, key, idioma, speakers);
         const response = await iniciarTranscripcion(transcriptionRequest);
 
         // Actualizar datos de uso si la respuesta los incluye
         if (response && typeof response === 'object') {
             const jobName = response.jobName || response.JobName || response;
-            
+
             // Si la respuesta incluye datos de uso o estimatedDuration, actualizar UI
             if (response.usedSeconds !== undefined || response.estimatedDuration !== undefined) {
                 // Si tenemos usedSeconds, usar eso directamente
@@ -352,31 +373,31 @@ $formulario.addEventListener('submit', async (e) => {
                         used: response.usedSeconds,
                         limit: response.limitSeconds || MAX_DURATION_SECONDS
                     });
-                } 
+                }
                 // Si no tenemos usedSeconds pero tenemos estimatedDuration, actualizar con fetchUserUsage
                 else if (response.estimatedDuration !== undefined) {
                     fetchUserUsage(); // Actualizar los datos de uso desde el servidor
                 }
             }
-            
+
             console.log("Using job name:", jobName);
             pollTranscriptionStatus(jobName);
         } else {
             const actualJobName = response;
             console.log("Using job name:", actualJobName);
             pollTranscriptionStatus(actualJobName);
-            
+
             // Intentar actualizar los datos de uso desde el servidor
             fetchUserUsage();
         }
     } catch (error) {
         console.error("Error:", error);
         const tNode = document.getElementById('transcriptionText');
-        
+
         // Manejar error de límite excedido
         if (error.message && error.message.includes("Usage limit reached")) {
             if (tNode) tNode.innerHTML = `<p class="text-danger">Has alcanzado el límite de ${MAX_MINUTES_FREE} minutos de transcripción.</p>`;
-            
+
             // Actualizar el indicador de uso
             try {
                 const data = JSON.parse(error.message.replace("Error 403: ", ""));
@@ -392,7 +413,7 @@ $formulario.addEventListener('submit', async (e) => {
         } else {
             if (tNode) tNode.innerHTML = `<p class="text-danger">Error: ${error.message}</p>`;
         }
-        
+
         processingInProgress = false;
     }
 });
@@ -408,10 +429,10 @@ function showError(msg) {
 function createUsageIndicator() {
     // Verificar si ya existe
     if (document.getElementById('usageIndicator')) return;
-    
+
     const formDiv = document.querySelector('.upload-card');
     if (!formDiv) return;
-    
+
     const usageIndicator = document.createElement('div');
     usageIndicator.id = 'usageIndicator';
     usageIndicator.className = 'usage-indicator mt-4';
@@ -428,7 +449,7 @@ function createUsageIndicator() {
             <span id="usageLimit"></span>
         </div>
     `;
-    
+
     // Insertar al final del formulario
     formDiv.appendChild(usageIndicator);
 }
@@ -436,35 +457,35 @@ function createUsageIndicator() {
 // Actualizar datos de uso en UI
 function updateUsageData(data) {
     if (!data) return;
-    
+
     userUsage.used = data.used || 0;
     userUsage.limit = data.limit || MAX_DURATION_SECONDS;
     userUsage.remaining = Math.max(0, userUsage.limit - userUsage.used);
-    
+
     // Actualizar indicador visual
     const usageBar = document.getElementById('usageBar');
     const usageText = document.getElementById('usageText');
     const usageLimit = document.getElementById('usageLimit');
-    
+
     if (!usageBar || !usageText || !usageLimit) return;
-    
+
     // Calcular porcentaje y actualizar barra
     const usedPercent = Math.min(100, (userUsage.used / userUsage.limit) * 100);
     usageBar.style.width = `${usedPercent}%`;
-    
+
     // Cambiar color según uso
     if (usedPercent > 90) {
         usageBar.classList.add('usage-critical');
     } else if (usedPercent > 70) {
         usageBar.classList.add('usage-warning');
     }
-    
+
     // Actualizar texto
     const usedMinutes = Math.floor(userUsage.used / 60);
     const usedSeconds = userUsage.used % 60;
     const remainingMinutes = Math.floor(userUsage.remaining / 60);
     const remainingSeconds = userUsage.remaining % 60;
-    
+
     usageText.innerHTML = `<strong>Usado:</strong> ${usedMinutes}m ${usedSeconds}s`;
     usageLimit.innerHTML = `<strong>Restante:</strong> ${remainingMinutes}m ${remainingSeconds}s`;
 }
@@ -474,7 +495,7 @@ async function fetchUserUsage() {
     try {
         // Intentar obtener datos de uso del servidor
         const usageData = await checkUserUsage();
-        
+
         // Si tenemos datos, actualizar UI
         if (usageData) {
             updateUsageData(usageData);
@@ -489,7 +510,7 @@ async function fetchUserUsage() {
             updateUsageData(defaultData);
             return defaultData;
         }
-        
+
     } catch (error) {
         console.error('Error al obtener datos de uso:', error);
         // Fallback a valores por defecto
