@@ -21,7 +21,9 @@ export async function iniciarTranscripcion(params) {
         // El modo de prueba solo se controla desde el backend
     };
     
-    console.log("Body enviado:", body);
+    // Log completo para debugging
+    // No exponer en producción porque revela bucket y key de subida del audio.
+    // console.log("Body enviado:", body);
     const response = await authFetch(apiUrl, {
         method: 'POST',
         body: JSON.stringify(body)
@@ -55,7 +57,9 @@ export async function iniciarTranscripcion(params) {
     // Parsear la respuesta
     const data = await response.json();
 
-    console.log("Respuesta completa:", data);
+    // Log completo para debugging
+    // No exponer en producción porque revela bucket del output location
+    // console.log("Respuesta completa:", data);
     
     // Devolver el objeto completo para que se pueda acceder a más datos
     return data;
