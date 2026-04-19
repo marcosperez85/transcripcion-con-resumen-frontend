@@ -56,12 +56,13 @@ export async function authFetch(url, options = {}) {
             : `Bearer ${token}`;
     }
     // Log completo para debugging
-    console.log("Request details:", {
-        url,
-        method: options.method || "GET",
-        headers: { ...headers, Authorization: headers.Authorization ? "Bearer ***" : undefined },
-        body: options.body ? "Present" : "None"
-    });
+    // No exponer en producción porque revela URL de API Gateway
+    // console.log("Request details:", {
+    //     url,
+    //     method: options.method || "GET",
+    //     headers: { ...headers, Authorization: headers.Authorization ? "Bearer ***" : undefined },
+    //     body: options.body ? "Present" : "None"
+    // });
 
     return fetch(url, {
         ...options,
