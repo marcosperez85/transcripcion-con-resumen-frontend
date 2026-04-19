@@ -51,6 +51,7 @@ body {
     color: rgba(255, 255, 255, 0.8);
     font-size: 1.1rem;
     font-weight: 300;
+    margin-bottom: -1rem;
 }
 
 /* Upload Card */
@@ -59,7 +60,6 @@ body {
     border-radius: var(--border-radius);
     padding: 2.5rem;
     box-shadow: var(--box-shadow);
-    margin-bottom: 2rem;
     transition: var(--transition);
 }
 
@@ -160,7 +160,7 @@ body {
     border-radius: var(--border-radius);
     padding: 2rem;
     box-shadow: var(--box-shadow);
-    margin-top: 2rem;
+    margin-bottom: 2rem;
     animation: slideUp 0.5s ease-out;
 }
 
