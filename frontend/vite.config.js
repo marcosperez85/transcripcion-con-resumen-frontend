@@ -8,7 +8,8 @@ export default defineConfig({
         main: resolve(__dirname, 'index.html'),
         app: resolve(__dirname, 'pages/app.html'),
         callback: resolve(__dirname, 'pages/callback.html'),
-        logout: resolve(__dirname, 'pages/logout.html')
+        logout: resolve(__dirname, 'pages/logout.html'),
+        privacy: resolve(__dirname, 'pages/privacy.html')
       }
     }
   },
