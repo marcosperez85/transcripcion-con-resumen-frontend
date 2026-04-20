@@ -45,7 +45,7 @@ async function post(payload) {
 }
 
 export async function checkTranscriptionStatus(jobName) {
-  // Espera recibir: { status, formattedReady, summaryReady, keys: {...} }
+  // Espera recibir: { status, jobStatus, keys: {...} }
   return post({ checkStatus: { job_name: jobName } });
 }
 
