@@ -9,7 +9,12 @@ document.getElementById("loginBtn").addEventListener("click", async () => {
 });
 
 document.getElementById("comenzarBtn1").addEventListener("click", async () => {
-    console.log("Comenzar Presionado")    
+    console.log("Comenzar 1 Presionado")    
+    await userManager.signinRedirect();
+});
+
+document.getElementById("comenzarBtn2").addEventListener("click", async () => {
+    console.log("Comenzar 2 Presionado")    
     await userManager.signinRedirect();
 });
 
