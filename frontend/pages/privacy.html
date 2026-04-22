@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,6 +8,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../src/styles.css">
 </head>
+
 <body>
     <!-- Auth button (similar al de index.html) -->
     <div class="auth-buttons">
@@ -35,168 +37,134 @@
         <!-- Content Section -->
         <div class="row justify-content-center">
             <div class="col-lg-10">
-                <div class="upload-card">
-                    <div class="mb-4">
-                        <h3 style="color: var(--primary-color); margin-bottom: 1rem;">
-                            <i class="fas fa-user-tie me-2"></i>
-                            Responsable del tratamiento
-                        </h3>
-                        <p>Esta aplicación es operada por <strong>SpeakNote - Marcos Pérez</strong>.</p>
-                    </div>
+                <div class="upload-card text-start" style="padding: 3rem;">
+                    <p class="text-muted mb-4">
+                        <strong>Última actualización:</strong> <span id="lastUpdate"></span>
+                    </p>
 
-                    <div class="mb-4">
-                        <h3 style="color: var(--primary-color); margin-bottom: 1rem;">
-                            <i class="fas fa-database me-2"></i>
-                            Datos que recopilamos
-                        </h3>
-                        <p>Al utilizar el servicio, podemos procesar:</p>
-                        <div class="results-content" style="max-height: none;">
-                            <div class="speaker-text">
-                                <div class="speaker-label">
-                                    <i class="fas fa-file-audio me-2" style="color: var(--success-color);"></i>
-                                    Archivos de audio subidos por el usuario
-                                </div>
-                            </div>
-                            <div class="speaker-text">
-                                <div class="speaker-label">
-                                    <i class="fas fa-file-alt me-2" style="color: var(--success-color);"></i>
-                                    Transcripciones generadas
-                                </div>
-                            </div>
-                            <div class="speaker-text">
-                                <div class="speaker-label">
-                                    <i class="fas fa-file-contract me-2" style="color: var(--success-color);"></i>
-                                    Resúmenes generados
-                                </div>
-                            </div>
-                            <div class="speaker-text">
-                                <div class="speaker-label">
-                                    <i class="fas fa-envelope me-2" style="color: var(--success-color);"></i>
-                                    Dirección de correo electrónico
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <p class="mb-4" style="font-size: 1.1rem; line-height: 1.6;">
 
-                    <div class="mb-4">
-                        <h3 style="color: var(--primary-color); margin-bottom: 1rem;">
-                            <i class="fas fa-bullseye me-2"></i>
-                            Finalidad del tratamiento
-                        </h3>
-                        <p>Los datos se utilizan exclusivamente para:</p>
-                        <div class="results-content" style="max-height: none;">
-                            <div class="speaker-text">
-                                <div class="speaker-label">
-                                    <i class="fas fa-cogs me-2" style="color: var(--primary-color);"></i>
-                                    Procesar los audios y generar transcripciones y resúmenes
-                                </div>
-                            </div>
-                            <div class="speaker-text">
-                                <div class="speaker-label">
-                                    <i class="fas fa-chart-line me-2" style="color: var(--primary-color);"></i>
-                                    Mejorar el funcionamiento del servicio
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <p>
+                        En SpeakNote nos comprometemos a proteger la privacidad de los usuarios y a tratar sus datos
+                        personales de acuerdo con las leyes aplicables en materia de protección de datos.
+                    </p>
 
-                    <div class="mb-4">
-                        <h3 style="color: var(--primary-color); margin-bottom: 1rem;">
-                            <i class="fas fa-balance-scale me-2"></i>
-                            Base legal
-                        </h3>
-                        <p>El tratamiento de los datos se basa en el <strong>consentimiento del usuario</strong> al utilizar la aplicación.</p>
-                    </div>
+                    <p>
+                        Esta Política de Privacidad describe qué datos recopilamos, cómo los utilizamos y con qué
+                        finalidad, en relación con el uso de nuestra aplicación web y los servicios asociados (en
+                        conjunto, el “Servicio”).
+                    </p>
 
-                    <div class="mb-4">
-                        <h3 style="color: var(--primary-color); margin-bottom: 1rem;">
-                            <i class="fas fa-cloud me-2"></i>
-                            Almacenamiento y servicios de terceros
-                        </h3>
-                        <p>Los datos se almacenan y procesan utilizando servicios de <strong>Amazon Web Services</strong>, incluyendo:</p>
-                        <div class="results-content" style="max-height: none;">
-                            <div class="speaker-text">
-                                <div class="speaker-label">
-                                    <i class="fab fa-aws me-2" style="color: var(--warning-color);"></i>
-                                    Amazon S3 (almacenamiento)
-                                </div>
-                            </div>
-                            <div class="speaker-text">
-                                <div class="speaker-label">
-                                    <i class="fab fa-aws me-2" style="color: var(--warning-color);"></i>
-                                    Amazon Transcribe (transcripción)
-                                </div>
-                            </div>
-                            <div class="speaker-text">
-                                <div class="speaker-label">
-                                    <i class="fab fa-aws me-2" style="color: var(--warning-color);"></i>
-                                    AWS Bedrock (resúmenes con IA)
-                                </div>
-                            </div>
-                        </div>
-                        <p style="margin-top: 1rem;"><strong>Estos servicios procesan los datos únicamente para proporcionar la funcionalidad del servicio.</strong></p>
-                    </div>
+                    <p>
+                        Al utilizar SpeakNote, aceptás el tratamiento de tus datos conforme a lo establecido en esta
+                        Política de Privacidad. Si no estás de acuerdo con alguno de estos términos, deberías dejar de
+                        utilizar el servicio.
+                    </p>
 
-                    <div class="mb-4">
-                        <h3 style="color: var(--primary-color); margin-bottom: 1rem;">
-                            <i class="fas fa-clock me-2"></i>
-                            Retención de datos
-                        </h3>
-                        <div style="background-color: #e3f2fd; border-left: 4px solid var(--primary-color); padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
-                            <p style="margin: 0; font-weight: 600;">
-                                <i class="fas fa-info-circle me-2" style="color: var(--primary-color);"></i>
-                                Los datos se almacenan durante un período limitado de <strong>48 horas</strong> y luego se eliminan automáticamente.
-                            </p>
-                        </div>
-                        <p>El usuario también puede solicitar la eliminación de sus datos en cualquier momento.</p>
-                    </div>
+                    <p>
+                        Esta Política de Privacidad forma parte de nuestros Términos de Servicio y debe leerse en
+                        conjunto con ellos.
+                    </p>
 
-                    <div class="mb-4">
-                        <h3 style="color: var(--primary-color); margin-bottom: 1rem;">
-                            <i class="fas fa-user-check me-2"></i>
-                            Derechos del usuario
-                        </h3>
-                        <p>El usuario puede solicitar:</p>
-                        <div class="results-content" style="max-height: none;">
-                            <div class="speaker-text">
-                                <div class="speaker-label">
-                                    <i class="fas fa-eye me-2" style="color: var(--success-color);"></i>
-                                    Acceso a sus datos personales
-                                </div>
-                            </div>
-                            <div class="speaker-text">
-                                <div class="speaker-label">
-                                    <i class="fas fa-edit me-2" style="color: var(--warning-color);"></i>
-                                    Rectificación de sus datos personales
-                                </div>
-                            </div>
-                            <div class="speaker-text">
-                                <div class="speaker-label">
-                                    <i class="fas fa-trash me-2" style="color: var(--danger-color);"></i>
-                                    Eliminación de sus datos personales
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    </p>
 
-                    <div class="mb-4">
-                        <h3 style="color: var(--primary-color); margin-bottom: 1rem;">
-                            <i class="fas fa-handshake me-2"></i>
-                            Uso de datos
-                        </h3>
-                        <div style="background-color: #e8f5e8; border-left: 4px solid var(--success-color); padding: 1rem; border-radius: 8px;">
-                            <p style="margin: 0; font-weight: 600;">
-                                <i class="fas fa-shield-alt me-2" style="color: var(--success-color);"></i>
-                                <strong>Los datos no se venden ni se comparten con terceros para fines comerciales.</strong>
-                            </p>
-                        </div>
-                    </div>
+                    <h4 class="mt-5 mb-3 text-dark border-bottom pb-2">1. Datos que recopilamos</h4>
+                    <p>Al utilizar el servicio, podemos procesar los siguientes datos:</p>
+                    <ul class="mb-4" style="line-height: 1.8;">
+                        <li>Archivos de audio subidos por el usuario</li>
+                        <li>Transcripciones generadas</li>
+                        <li>Resúmenes generados</li>
+                        <li>Dirección de correo electrónico (en caso de registro)</li>
+                        <li>Información técnica básica (como dirección IP, tipo de navegador y registros de uso)</li>
+                    </ul>
+
+                    <h4 class="mt-5 mb-3 text-dark border-bottom pb-2">2. Finalidad del tratamiento</h4>
+                    <p>Los datos se utilizan exclusivamente para:</p>
+                    <ul class="mb-4" style="line-height: 1.8;">
+                        <li>Procesar los audios y generar transcripciones y resúmenes</li>
+                        <li>Operar y mejorar el funcionamiento del servicio</li>
+                        <li>Brindar soporte técnico si es necesario</li>
+                    </ul>
+
+                    <h4 class="mt-5 mb-3 text-dark border-bottom pb-2">3. Base legal</h4>
+                    <p class="mb-4" style="line-height: 1.6;">
+                        El tratamiento de los datos se basa en el consentimiento del usuario al utilizar la aplicación.
+                    </p>
+
+                    <h4 class="mt-5 mb-3 text-dark border-bottom pb-2">4. Servicios de terceros</h4>
+                    <p style="line-height: 1.6;">
+                        El servicio utiliza infraestructura de terceros para su funcionamiento, incluyendo:
+                    </p>
+                    <ul style="line-height: 1.8;">
+                        <li>Amazon S3 (almacenamiento de archivos)</li>
+                        <li>Amazon Transcribe (procesamiento de audio)</li>
+                        <li>AWS Bedrock (generación de resúmenes mediante IA)</li>
+                    </ul>
+                    <p class="mb-4" style="line-height: 1.6;">
+                        Estos proveedores procesan los datos únicamente para prestar el servicio y no los utilizan para
+                        fines propios.
+                    </p>
+
+                    <h4 class="mt-5 mb-3 text-dark border-bottom pb-2">5. Seguridad de los datos</h4>
+                    <p class="mb-4" style="line-height: 1.6;">
+                        Los datos se transmiten de forma segura mediante protocolos SSL/TLS y se almacenan cifrados en
+                        los servicios utilizados.
+                    </p>
+
+                    <h4 class="mt-5 mb-3 text-dark border-bottom pb-2">6. Retención de datos</h4>
+                    <p style="line-height: 1.6;">
+                        Los datos se almacenan durante un período limitado de <strong>48 horas</strong> y luego se
+                        eliminan automáticamente.
+                    </p>
+                    <p class="mb-4" style="line-height: 1.6;">
+                        El usuario puede solicitar la eliminación de sus datos en cualquier momento.
+                    </p>
+
+                    <h4 class="mt-5 mb-3 text-dark border-bottom pb-2">7. Uso de inteligencia artificial</h4>
+                    <p class="mb-4" style="line-height: 1.6;">
+                        Los datos procesados no se utilizan para entrenar modelos de inteligencia artificial ni para
+                        ningún otro propósito distinto al funcionamiento del servicio.
+                    </p>
+
+                    <h4 class="mt-5 mb-3 text-dark border-bottom pb-2">8. Transferencias internacionales</h4>
+                    <p class="mb-4" style="line-height: 1.6;">
+                        Los datos pueden ser procesados en servidores ubicados fuera del país de residencia del usuario,
+                        incluyendo Estados Unidos, mediante proveedores de infraestructura en la nube.
+                    </p>
+
+                    <h4 class="mt-5 mb-3 text-dark border-bottom pb-2">9. Divulgación por requerimientos legales</h4>
+                    <p class="mb-4" style="line-height: 1.6;">
+                        Podremos divulgar información si es requerido por ley, regulación o autoridad competente.
+                    </p>
+
+                    <h4 class="mt-5 mb-3 text-dark border-bottom pb-2">10. Cookies y datos técnicos</h4>
+                    <p class="mb-4" style="line-height: 1.6;">
+                        Podemos recopilar información técnica básica necesaria para el funcionamiento del servicio. No
+                        utilizamos cookies con fines publicitarios.
+                    </p>
+
+                    <h4 class="mt-5 mb-3 text-dark border-bottom pb-2">11. Derechos del usuario</h4>
+                    <p>El usuario puede solicitar:</p>
+                    <ul class="mb-4" style="line-height: 1.8;">
+                        <li>Acceso a sus datos personales</li>
+                        <li>Corrección de datos inexactos</li>
+                        <li>Eliminación de sus datos</li>
+                    </ul>
+
+                    <h4 class="mt-5 mb-3 text-dark border-bottom pb-2">12. Cambios en esta política</h4>
+                    <p class="mb-4" style="line-height: 1.6;">
+                        Podemos actualizar esta política ocasionalmente. Los cambios se publicarán en esta página con
+                        una fecha de actualización revisada.
+                    </p>
+
+                    <h4 class="mt-5 mb-3 text-dark border-bottom pb-2">13. Contacto</h4>
+                    <p class="mb-5" style="line-height: 1.6;">
+                        Para consultas relacionadas con privacidad, podés contactarte a:
+                        <br><br>
+                        <strong>[tu email]</strong>
+                    </p>
 
                     <div class="text-center mt-5" style="padding-top: 2rem; border-top: 1px solid #e0e0e0;">
-                        <p style="color: #666; margin-bottom: 1.5rem;">
-                            <i class="fas fa-calendar-alt me-2"></i>
-                            Última actualización: <span id="lastUpdate"></span>
-                        </p>
                         <a href="../index.html" class="btn btn-primary btn-lg">
                             <i class="fas fa-arrow-left me-2"></i>
                             Volver al inicio
@@ -213,7 +181,7 @@
             <div class="row">
                 <div class="col-md-8">
                     <p class="text-white-50 mb-0">
-                        SpeakNote - Marcos Pérez - Todos los derechos reservados
+                        ©2026 SpeakNote
                     </p>
                 </div>
                 <div class="col-md-4 text-md-end">
@@ -227,4 +195,5 @@
 
     <script type="module" src="../src/privacy.js"></script>
 </body>
+
 </html>
