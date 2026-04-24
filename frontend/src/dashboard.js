@@ -1,7 +1,7 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
-import { getDashboardData, getTranscriptionResults } from "./statusChecker.js";
+import { getDashboardData, getTranscriptionResults, deleteFile } from "./statusChecker.js";
 import { getIdentityId } from "./s3Credentials.js";
 import { CONFIG } from "./config.js";
 
@@ -60,6 +60,7 @@ function renderJobs(data) {
     data.formatted.forEach(f => {
         jobsMap.set(f.jobName, {
             jobName: f.jobName,
+            key: f.key,
             date: new Date(f.date),
             hasTranscription: true,
             hasSummary: false
@@ -70,9 +71,16 @@ function renderJobs(data) {
     data.summaries.forEach(s => {
         if (jobsMap.has(s.jobName)) {
             jobsMap.get(s.jobName).hasSummary = true;
+            // Si el resumen tiene el key y la transcripción no, podríamos asignarlo, 
+            // pero con el key del formateado debería bastar para borrar ambos si es que el backend borra todo.
+            // Para asegurar, podemos guardar un key si no estaba.
+            if (!jobsMap.get(s.jobName).key) {
+                jobsMap.get(s.jobName).key = s.key;
+            }
         } else {
             jobsMap.set(s.jobName, {
                 jobName: s.jobName,
+                key: s.key,
                 date: new Date(s.date),
                 hasTranscription: false,
                 hasSummary: true
@@ -114,8 +122,11 @@ function renderJobs(data) {
                         <button class="btn btn-sm btn-outline-primary me-2 btn-view-transcription" data-job="${job.jobName}" ${!job.hasTranscription ? 'disabled' : ''}>
                             <i class="fas fa-align-left me-1"></i>Transcripción
                         </button>
-                        <button class="btn btn-sm btn-outline-success btn-view-summary" data-job="${job.jobName}" ${!job.hasSummary ? 'disabled' : ''}>
+                        <button class="btn btn-sm btn-outline-success me-2 btn-view-summary" data-job="${job.jobName}" ${!job.hasSummary ? 'disabled' : ''}>
                             <i class="fas fa-list-ul me-1"></i>Resumen
+                        </button>
+                        <button class="btn btn-sm btn-outline-danger btn-delete-file" data-key="${job.key}" title="Eliminar Trabajo">
+                            <i class="fas fa-trash-alt"></i>
                         </button>
                     </div>
                 </div>
@@ -145,9 +156,12 @@ function renderJobs(data) {
                 <div>
                     <i class="fas fa-file-audio text-warning me-2"></i>${audio.filename}
                 </div>
-                <div class="text-muted small">
+                <div class="text-muted small d-flex align-items-center">
                     <span class="me-3">${sizeMb} MB</span>
-                    <span>${dateStr}</span>
+                    <span class="me-3">${dateStr}</span>
+                    <button class="btn btn-sm btn-outline-danger btn-delete-file" data-key="${audio.key}" title="Eliminar Audio">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
                 </div>
             `;
             listGroup.appendChild(item);
@@ -164,6 +178,27 @@ function renderJobs(data) {
     document.querySelectorAll('.btn-view-summary').forEach(btn => {
         btn.addEventListener('click', () => showResult(btn.getAttribute('data-job'), 'summary'));
     });
+    
+    document.querySelectorAll('.btn-delete-file').forEach(btn => {
+        btn.addEventListener('click', () => handleDelete(btn.getAttribute('data-key')));
+    });
+}
+
+async function handleDelete(key) {
+    if (!confirm("¿Estás seguro de que deseas eliminar este archivo? Esta acción no se puede deshacer.")) {
+        return;
+    }
+    
+    try {
+        const identityId = await getIdentityId();
+        await deleteFile(key, identityId);
+        
+        // Recargar la página para reflejar los cambios
+        window.location.reload();
+    } catch (error) {
+        console.error("Error al eliminar el archivo:", error);
+        alert("Ocurrió un error al intentar eliminar el archivo: " + error.message);
+    }
 }
 
 // Modal handling
