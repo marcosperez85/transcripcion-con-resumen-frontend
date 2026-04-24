@@ -53,3 +53,8 @@ export async function getTranscriptionResults(bucketName, jobName) {
   // Espera recibir: { transcription: "...", summary: "..." }
   return post({ getResults: { job_name: jobName, bucketName } });
 }
+
+export async function getDashboardData(identityId) {
+  // Llama al endpoint de dashboard pasándole el identityId
+  return post({ getDashboardData: true, identityId });
+}
