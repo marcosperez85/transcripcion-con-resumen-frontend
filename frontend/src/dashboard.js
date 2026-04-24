@@ -1,3 +1,6 @@
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+
 import { getDashboardData, getTranscriptionResults } from "./statusChecker.js";
 import { getIdentityId } from "./s3Credentials.js";
 import { CONFIG } from "./config.js";
