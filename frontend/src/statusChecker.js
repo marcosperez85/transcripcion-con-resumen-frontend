@@ -58,3 +58,7 @@ export async function getDashboardData(identityId) {
   // Llama al endpoint de dashboard pasándole el identityId
   return post({ getDashboardData: true, identityId });
 }
+
+export async function deleteFile(key, identityId) {
+  return post({ deleteFile: { key, identityId } });
+}
