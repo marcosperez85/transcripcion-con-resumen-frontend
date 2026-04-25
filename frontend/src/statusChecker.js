@@ -62,3 +62,7 @@ export async function getDashboardData(identityId) {
 export async function deleteFile(key, identityId) {
   return post({ deleteFile: { key, identityId } });
 }
+
+export async function getDownloadUrl(key, identityId) {
+  return post({ getDownloadUrl: { key, identityId } });
+}
