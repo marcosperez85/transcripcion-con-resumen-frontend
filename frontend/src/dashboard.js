@@ -1,7 +1,7 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
-import { getDashboardData, getTranscriptionResults, deleteFile } from "./statusChecker.js";
+import { getDashboardData, getTranscriptionResults, deleteFile, getDownloadUrl } from "./statusChecker.js";
 import { getIdentityId } from "./s3Credentials.js";
 import { CONFIG } from "./config.js";
 
@@ -125,6 +125,9 @@ function renderJobs(data) {
                         <button class="btn btn-sm btn-outline-success me-2 btn-view-summary" data-job="${job.jobName}" ${!job.hasSummary ? 'disabled' : ''}>
                             <i class="fas fa-list-ul me-1"></i>Resumen
                         </button>
+                        <button class="btn btn-sm btn-outline-info me-2 btn-download-file" data-key="${job.key}" title="Descargar Archivo">
+                            <i class="fas fa-download"></i>
+                        </button>
                         <button class="btn btn-sm btn-outline-danger btn-delete-file" data-key="${job.key}" title="Eliminar Trabajo">
                             <i class="fas fa-trash-alt"></i>
                         </button>
@@ -159,6 +162,9 @@ function renderJobs(data) {
                 <div class="text-muted small d-flex align-items-center">
                     <span class="me-3">${sizeMb} MB</span>
                     <span class="me-3">${dateStr}</span>
+                    <button class="btn btn-sm btn-outline-info me-2 btn-download-file" data-key="${audio.key}" title="Descargar Audio">
+                        <i class="fas fa-download"></i>
+                    </button>
                     <button class="btn btn-sm btn-outline-danger btn-delete-file" data-key="${audio.key}" title="Eliminar Audio">
                         <i class="fas fa-trash-alt"></i>
                     </button>
@@ -182,6 +188,33 @@ function renderJobs(data) {
     document.querySelectorAll('.btn-delete-file').forEach(btn => {
         btn.addEventListener('click', () => handleDelete(btn.getAttribute('data-key')));
     });
+
+    document.querySelectorAll('.btn-download-file').forEach(btn => {
+        btn.addEventListener('click', () => handleDownload(btn.getAttribute('data-key')));
+    });
+}
+
+async function handleDownload(key) {
+    try {
+        const identityId = await getIdentityId();
+        const data = await getDownloadUrl(key, identityId);
+        
+        if (data && data.url) {
+            // Utilizamos el enlace firmado para descargar el archivo (forza la descarga en otra pestaña/descarga directa)
+            const a = document.createElement('a');
+            a.href = data.url;
+            a.target = '_blank';
+            a.download = key.split('/').pop();
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        } else {
+            throw new Error("No se recibió una URL válida");
+        }
+    } catch (error) {
+        console.error("Error al descargar el archivo:", error);
+        alert("Ocurrió un error al intentar descargar el archivo: " + error.message);
+    }
 }
 
 async function handleDelete(key) {
