@@ -291,14 +291,14 @@ function formatTranscriptionText(transcription) {
             </div>
         `).join('');
     }
-    return `<pre>${transcription}</pre>`;
+    return `<div class="formatted-text">${transcription}</div>`;
 }
 
 function formatSummaryText(summary) {
     if (typeof summary === 'object') {
-        return `<pre>${JSON.stringify(summary, null, 2)}</pre>`;
+        return `<div class="formatted-text">${JSON.stringify(summary, null, 2)}</div>`;
     }
-    return `<pre>${summary}</pre>`;
+    return `<div class="formatted-text">${summary}</div>`;
 }
 
 // Form submission
