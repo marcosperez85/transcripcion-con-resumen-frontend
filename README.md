@@ -8,7 +8,7 @@
 
 Este proyecto es una aplicación web que permite **transcribir archivos de audio automáticamente** y generar resúmenes de las transcripciones. La aplicación utiliza servicios de AWS para procesar los archivos de audio y generar transcripciones con identificación de hablantes.
 
-A diferencia de otros servicios de transcripción y resúmenes, esta aplicación está enfocada en la privacidad de la información de forma que el usuario final tenga control sobre los audios que sube a la plataforma, con la seguridad que no van a ser usados por terceros y con la posibilidad de eliminarlos en cualquier momento.
+A diferencia de otros servicios de transcripción y resúmenes, esta aplicación está enfocada en la privacidad de la información, asegurando que el usuario final tenga control sobre los audios que sube a la plataforma, con la garantía de que no van a ser usados por terceros. Además, los archivos que se suben se borran automáticamente en 48hs, el usuario tiene la posibilidad de realizar una descarga local de sus procesamientos y puede realizar un borrado manual completo en cualquier momento.
 
 <p align="center">
   <em>Pantalla principal con el formulario de carga del audio</em>
@@ -31,19 +31,35 @@ A diferencia de otros servicios de transcripción y resúmenes, esta aplicación
 
 ### Estructura del proyecto
 
-```
+```text
 transcripcion-con-resumen-frontend/
 ├── frontend/                    # Aplicación web frontend
-│   └── src/
-│       ├── main.js             # Lógica principal de la aplicación
-│       ├── s3Upload.js         # Subida de archivos a S3
-│       ├── transcribe.js       # Inicio de transcripción
-│       ├── formatear.js        # Formateo de transcripciones
-│       └── cognitoAuth.js      # Autenticación (no mostrado)
-├── infra/                      # Infraestructura CDK
+│   ├── pages/                   # Páginas HTML de la aplicación
+│   │   ├── app.html             # Interfaz principal (subida de audios)
+│   │   ├── callback.html        # Redirección tras autenticación
+│   │   ├── logout.html          # Confirmación de cierre de sesión
+│   │   ├── privacy.html         # Política de privacidad
+│   │   └── userDashboard.html   # Historial y gestión de archivos
+│   └── src/                     # Lógica y utilidades
+│       ├── audioUtils.js        # Utilidades para medir/procesar audios
+│       ├── auth.js              # Configuración de autenticación (Cognito/OIDC)
+│       ├── callback.js          # Manejo de la redirección de autenticación
+│       ├── config.js            # Variables y configuración global
+│       ├── dashboard.js         # Lógica del historial de usuario
+│       ├── loginHandler.js      # Disparador de inicio de sesión
+│       ├── logoutHandler.js     # Disparador de cierre de sesión
+│       ├── logoutPage.js        # Lógica de la pantalla de cierre
+│       ├── main.js              # Funcionalidad principal (subida y estado)
+│       ├── privacy.js           # Navegación para política de privacidad
+│       ├── s3Credentials.js     # Obtención de identidad mediante Identity Pool
+│       ├── s3Upload.js          # Lógica para subir archivos a S3
+│       ├── statusChecker.js     # Llamadas a la API (estado, descarga, borrado)
+│       ├── styles.css           # Estilos de la aplicación
+│       └── transcribe.js        # Petición inicial para transcribir audios
+├── infra/                       # Infraestructura CDK
 │   └── infra/
-│       └── infra_stack.py      # Stack de infraestructura AWS
-└── README.md                   # Este archivo
+│       └── infra_stack.py       # Stack de infraestructura AWS
+└── README.md                    # Este archivo
 ```
 
 ### Instalación y configuración
@@ -92,6 +108,11 @@ cdk bootstrap  # Solo la primera vez
 cdk deploy
 ```
 
+Para realizar un despliegue rápido únicamente de los archivos estáticos del frontend (sin alterar la infraestructura), ejecuta desde la carpeta `root`:
+```bash
+npm run deploy:fast
+```
+
 ### Uso de la aplicación
 
 1. Abre la aplicación web en tu navegador
@@ -116,7 +137,7 @@ cdk deploy
 
 This project is a web application that allows you to **automatically transcribe audio files** and generate summaries of the transcriptions. The application uses AWS services to process audio files and generate transcriptions with speaker identification.
 
-Unlike other transcription and summarization services, this application is focused on information privacy, ensuring that the end user maintains full control over the audio files they upload to the platform, with the guarantee that they will not be used by third parties and can be deleted at any time.
+Unlike other transcription and summarization services, this application is highly focused on information privacy, ensuring that the end user maintains full control over the audio files they upload to the platform, with the guarantee that they will not be used by third parties. In addition, uploaded files are automatically deleted after 48 hours, and users have the ability to perform local downloads or manually delete their files completely at any time.
 
 <p align="center">
   <em>Main screen with form to upload audio file</em>
@@ -139,19 +160,35 @@ Unlike other transcription and summarization services, this application is focus
 
 ### Project structure
 
-```
+```text
 transcripcion-con-resumen-frontend/
 ├── frontend/                    # Frontend web application
-│   └── src/
-│       ├── main.js             # Main application logic
-│       ├── s3Upload.js         # S3 file upload
-│       ├── transcribe.js       # Transcription initiation
-│       ├── formatear.js        # Transcription formatting
-│       └── cognitoAuth.js      # Authentication (not shown)
-├── infra/                      # CDK Infrastructure
+│   ├── pages/                   # HTML Pages
+│   │   ├── app.html             # Main interface (audio upload)
+│   │   ├── callback.html        # Authentication callback
+│   │   ├── logout.html          # Logout confirmation
+│   │   ├── privacy.html         # Privacy policy
+│   │   └── userDashboard.html   # User history and file management
+│   └── src/                     # Logic and utilities
+│       ├── audioUtils.js        # Audio processing utilities
+│       ├── auth.js              # Auth configuration (Cognito/OIDC)
+│       ├── callback.js          # Auth redirection handling
+│       ├── config.js            # Global configuration
+│       ├── dashboard.js         # User dashboard logic
+│       ├── loginHandler.js      # Login trigger
+│       ├── logoutHandler.js     # Logout trigger
+│       ├── logoutPage.js        # Logout screen logic
+│       ├── main.js              # Main functionality (upload and status)
+│       ├── privacy.js           # Privacy policy navigation
+│       ├── s3Credentials.js     # AWS Identity Pool credentials
+│       ├── s3Upload.js          # S3 upload logic
+│       ├── statusChecker.js     # API calls (status, download, delete)
+│       ├── styles.css           # Application styles
+│       └── transcribe.js        # Initial transcription API call
+├── infra/                       # CDK Infrastructure
 │   └── infra/
-│       └── infra_stack.py      # AWS infrastructure stack
-└── README.md                   # This file
+│       └── infra_stack.py       # AWS infrastructure stack
+└── README.md                    # This file
 ```
 
 ### Installation and setup
@@ -198,6 +235,11 @@ cdk --version
 # From the infra/ folder
 cdk bootstrap  # Only the first time
 cdk deploy
+```
+
+For a quick deployment of only the frontend static files (without altering infrastructure), run from the `root` folder:
+```bash
+npm run deploy:fast
 ```
 
 ### How to use the application
