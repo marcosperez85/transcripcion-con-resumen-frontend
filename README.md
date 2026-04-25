@@ -11,14 +11,25 @@ Este proyecto es una aplicación web que permite **transcribir archivos de audio
 A diferencia de otros servicios de transcripción y resúmenes, esta aplicación está enfocada en la privacidad de la información, asegurando que el usuario final tenga control sobre los audios que sube a la plataforma, con la garantía de que no van a ser usados por terceros. Además, los archivos que se suben se borran automáticamente en 48hs, el usuario tiene la posibilidad de realizar una descarga local de sus procesamientos y puede realizar un borrado manual completo en cualquier momento.
 
 <p align="center">
-  <em>Pantalla principal con el formulario de carga del audio</em>
-  <img src="./assets/01_Main.jpeg" alt="Pantalla principal" width="80%"/>
+  <em>Vista del landing page inicial</em>
+  <img src="./assets/01_Index.jpeg" alt="Landing page inicial" width="80%"/>
+</p>
+
+<p align="center">
+  <em>Vista principal de la aplicación al iniciar sesión</em>
+  <img src="./assets/02_App.jpeg" alt="Aplicación principal" width="80%"/>
 </p>
 
 <p align="center">
   <em>Vista del resumen generado automáticamente</em>
-  <img src="./assets/02_Resultado.jpeg" alt="Pantalla de resultados" width="80%"/>
+  <img src="./assets/03_Resultado.jpeg" alt="Pantalla de resultados" width="80%"/>
 </p>
+
+<p align="center">
+  <em>Vista del dashboard de control del usuario</em>
+  <img src="./assets/04_UserDashboard.jpeg" alt="User dashboard" width="80%"/>
+</p>
+
 
 ### Características principales:
 
