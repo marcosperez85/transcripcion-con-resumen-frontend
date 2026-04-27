@@ -11,9 +11,9 @@ export const CONFIG = {
     API_URL: "https://yfoulcwp9a.execute-api.us-east-1.amazonaws.com/prod/transcribir",
 
     // URLs dinámicas según entorno
-    BASE_URL: isDevelopment
+    BASE_URL: (isDevelopment
         ? 'http://localhost:5173'
-        : 'https://www.sonitext.com',
+        : window.location.origin) + '/',
 
     // URLs derivadas
     get PROVIDER() {
@@ -29,11 +29,11 @@ export const CONFIG = {
     },
 
     get CALLBACK_URL() {
-        return `${this.BASE_URL}/pages/callback.html`;
+        return `${this.BASE_URL}pages/callback.html`;
     },
-
+    
     get LOGOUT_URL() {
-        return `${this.BASE_URL}/pages/logout.html`;
+        return `${this.BASE_URL}pages/logout.html`;
     }
 };
 
