@@ -13,7 +13,7 @@ export const CONFIG = {
     // URLs dinámicas según entorno
     BASE_URL: isDevelopment
         ? 'http://localhost:5173'
-        : 'https://d11ahn26gyfe9q.cloudfront.net',
+        : 'https://www.sonitext.com',
 
     // URLs derivadas
     get PROVIDER() {
