@@ -52,30 +52,7 @@ class FrontendInfraStack(Stack):
                 "Ejecutá 'npm run build'."
             )
 
-        # 🟢 1. CloudFront Function (replaces Lambda@Edge)
-        auth_function = cloudfront.Function(
-            self,
-            "AuthFunction",
-            code=cloudfront.FunctionCode.from_inline("""
-function handler(event) {
-    var request = event.request;
-    var headers = request.headers;
 
-    // Check for token (cookie OR Authorization header)
-    if (!headers.authorization && !headers.cookie) {
-        return {
-            statusCode: 302,
-            statusDescription: 'Redirect to login',
-            headers: {
-                location: { value: '/login.html' }
-            }
-        };
-    }
-
-    return request;
-}
-""")
-        )
 
         # 🟢 2. Private S3 bucket
         website_bucket = s3.Bucket(
@@ -100,13 +77,7 @@ function handler(event) {
             additional_behaviors={
                 "/pages/*": cloudfront.BehaviorOptions(
                     origin=origins.S3Origin(website_bucket),
-                    cache_policy=cloudfront.CachePolicy.CACHING_DISABLED,
-                    function_associations=[
-                        cloudfront.FunctionAssociation(
-                            function=auth_function,
-                            event_type=cloudfront.FunctionEventType.VIEWER_REQUEST
-                        )
-                    ]
+                    cache_policy=cloudfront.CachePolicy.CACHING_DISABLED
                 )
             },
             domain_names=[domain_name, www_domain],
