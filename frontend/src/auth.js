@@ -7,7 +7,7 @@ const cognitoAuthConfig = {
     redirect_uri: CONFIG.CALLBACK_URL,
     response_type: "code",
     scope: "openid email",
-    userStore: new WebStorageStateStore({ store: window.localStorage })
+    userStore: new WebStorageStateStore({ store: window.localStorage }),
 };
 
 export const userManager = new UserManager(cognitoAuthConfig);
@@ -26,7 +26,8 @@ export async function signOutRedirect() {
     window.location.href =
         `${CONFIG.COGNITO_DOMAIN}/logout` +
         `?client_id=${CONFIG.USER_POOL_CLIENT_ID}` +
-        `&logout_uri=${encodeURIComponent(CONFIG.BASE_URL)}`;
+        `&response_type=code` +
+        `&redirect_uri=${encodeURIComponent(CONFIG.BASE_URL)}`;
 }
 
 // Nueva función para redirigir al usuario a la página de registro
