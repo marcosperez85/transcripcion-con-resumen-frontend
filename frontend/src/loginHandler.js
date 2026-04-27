@@ -5,17 +5,17 @@ import { userManager, redirectToSignUp } from "./auth.js";
 
 document.getElementById("loginBtn").addEventListener("click", async () => {
     console.log("Login Presionado")    
-    await userManager.signinRedirect();
+    await userManager.signinRedirect({ prompt: 'login' });
 });
 
 document.getElementById("comenzarBtn1").addEventListener("click", async () => {
     console.log("Comenzar 1 Presionado")    
-    await userManager.signinRedirect();
+    await userManager.signinRedirect({ prompt: 'login' });
 });
 
 document.getElementById("comenzarBtn2").addEventListener("click", async () => {
     console.log("Comenzar 2 Presionado")    
-    await userManager.signinRedirect();
+    await userManager.signinRedirect({ prompt: 'login' });
 });
 
 // Añadir evento para el botón de registro

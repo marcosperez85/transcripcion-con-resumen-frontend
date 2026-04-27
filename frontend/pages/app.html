@@ -15,7 +15,7 @@
         (async () => {
             const user = await userManager.getUser();
             if (!user || user.expired) {
-                await userManager.signinRedirect();
+                await userManager.signinRedirect({ prompt: 'login' });
             } else {
                 // Al verificar que el usuario está autenticado, intentamos obtener datos de uso
                 try {
