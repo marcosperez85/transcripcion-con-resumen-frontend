@@ -26,8 +26,7 @@ export async function signOutRedirect() {
     window.location.href =
         `${CONFIG.COGNITO_DOMAIN}/logout` +
         `?client_id=${CONFIG.USER_POOL_CLIENT_ID}` +
-        `&response_type=code` +
-        `&redirect_uri=${encodeURIComponent(CONFIG.BASE_URL)}`;
+        `&logout_uri=${encodeURIComponent(CONFIG.BASE_URL)}`;
 }
 
 // Nueva función para redirigir al usuario a la página de registro
