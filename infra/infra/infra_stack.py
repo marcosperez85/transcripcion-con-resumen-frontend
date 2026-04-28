@@ -104,6 +104,15 @@ class FrontendInfraStack(Stack):
             ),
         )
 
+        # 🟢 Registro para la tienda en Lemon Squeezy
+        route53.ARecord(
+            self,
+            "ShopLemonRecord",
+            zone=hosted_zone,
+            record_name="shop", # Esto crea shop.sonitext.com
+            target=route53.RecordTarget.from_ip_addresses("3.33.255.208"),
+        )
+
         # 🟢 4. Deploy frontend build
         s3deploy.BucketDeployment(
             self,
