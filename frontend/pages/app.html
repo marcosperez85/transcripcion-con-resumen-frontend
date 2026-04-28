@@ -12,27 +12,59 @@
         import { userManager } from "../src/auth.js";
         import { checkUserUsage } from "../src/statusChecker.js";
 
+        // URL base de tu producto en Lemon Squeezy (REEMPLAZAR CON LA URL REAL)
+        // Por lo general tiene este formato: https://[tu-tienda].lemonsqueezy.com/checkout/buy/[VARIANT_ID]
+        // O si usas dominio personalizado: https://shop.sonitext.com/checkout/buy/[VARIANT_ID]
+        const LEMON_SQUEEZY_CHECKOUT_URL = "https://shop.sonitext.com/checkout/buy/REEMPLAZAR_ID_DEL_PRODUCTO";
+
         (async () => {
             const user = await userManager.getUser();
             if (!user || user.expired) {
                 await userManager.signinRedirect({ prompt: 'login' });
             } else {
+                // Exponer función de checkout globalmente
+                window.abrirCheckout = () => {
+                    const userId = user.profile.sub;
+                    // Añadimos el user_id al custom_data de la URL
+                    const checkoutUrl = `${LEMON_SQUEEZY_CHECKOUT_URL}?checkout[custom][user_id]=${encodeURIComponent(userId)}`;
+                    window.location.href = checkoutUrl;
+                };
+
+                // Comprobar si hay una intención de compra pendiente desde el Landing Page
+                if (localStorage.getItem("pendingPurchase") === "true") {
+                    localStorage.removeItem("pendingPurchase");
+                    // Dar un pequeño tiempo para que cargue la UI antes de redirigir al checkout
+                    setTimeout(() => {
+                        window.abrirCheckout();
+                    }, 500);
+                }
+
                 // Al verificar que el usuario está autenticado, intentamos obtener datos de uso
                 try {
-                    // Esta función se ejecuta cuando se carga la página
-                    // Los datos de uso se mostrarán cuando se inicialice la UI desde main.js
                     await checkUserUsage();
                 } catch (error) {
                     console.error("Error cargando datos de uso:", error);
                 }
             }
         })();
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const btnComprarApp = document.getElementById("btnComprarApp");
+            if (btnComprarApp) {
+                btnComprarApp.addEventListener("click", () => {
+                    if (window.abrirCheckout) window.abrirCheckout();
+                });
+            }
+        });
     </script>
 </head>
 
 <body>
     <!-- Auth button -->
     <div class="auth-buttons">
+        <button type="button" class="btn btn-warning me-2 fw-bold text-dark" id="btnComprarApp">
+            <i class="fas fa-bolt me-1"></i>Comprar 10 Horas
+        </button>
         <a href="userDashboard.html" class="btn btn-outline-info me-2">
             <i class="fas fa-history me-1"></i>Mi Historial
         </a>
