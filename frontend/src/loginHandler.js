@@ -26,3 +26,15 @@ if (registerBtn) {
         redirectToSignUp();
     });
 }
+
+document.getElementById("comenzarBtnGratis")?.addEventListener("click", async () => {
+    console.log("Comenzar Gratis Presionado");
+    await userManager.signinRedirect({ prompt: 'login' });
+});
+
+document.getElementById("comenzarBtnPro")?.addEventListener("click", async () => {
+    console.log("Comprar Pro Presionado");
+    // Guardamos la intención de compra para procesarla en app.html una vez logueados
+    localStorage.setItem("pendingPurchase", "true");
+    await userManager.signinRedirect({ prompt: 'login' });
+});
